@@ -158,6 +158,13 @@ class BoltAdapter(GraphAdapter):
         self.dialects = self.flavour.dialects
         self.database = self.settings.get("database") or None
         self._driver: Any = None
+        #: (statement, "ok" | error text) for every DDL attempt, kept because a
+        #: tolerated failure that is not recorded is indistinguishable from one
+        #: that never happened - which is exactly why an unconfirmed index was
+        #: undiagnosable.
+        self.schema_attempts: list[tuple[str, str]] = []
+        #: The same for index introspection.
+        self.probe_attempts: list[tuple[str, str]] = []
 
     # -- lifecycle ---------------------------------------------------------
 
@@ -250,26 +257,34 @@ class BoltAdapter(GraphAdapter):
         )
 
     def prepare_schema(self) -> None:
+        self.schema_attempts = []
         with self._session() as session:
             for statement in self.flavour.schema:
                 try:
                     session.run(statement).consume()
+                    self.schema_attempts.append((statement, "ok"))
                 except Exception as exc:
+                    self.schema_attempts.append((statement, f"{type(exc).__name__}: {exc}"))
                     if not self.flavour.tolerate_schema_errors:
                         raise WorkloadFailure(
                             f"{self.name}: schema statement failed: {statement}: {exc}"
                         ) from exc
 
     def schema_is_ready(self) -> bool | None:
+        self.probe_attempts = []
         rows: list[str] | None = None
         for probe in self.flavour.index_probes:
             try:
                 with self._session() as session:
                     rows = [str(record.values()) for record in session.run(probe)]
+                self.probe_attempts.append((probe, f"ok, {len(rows)} row(s)"))
                 break
-            except Exception:
+            except Exception as exc:
                 # This spelling was rejected; try the next. Only when every
-                # probe fails do we admit we cannot tell.
+                # probe fails do we admit we cannot tell - and the reason each
+                # one failed is kept, because "we could not ask" and "we asked
+                # wrongly" need different fixes.
+                self.probe_attempts.append((probe, f"{type(exc).__name__}: {exc}"))
                 continue
         if rows is None:
             # Not being able to ask is different from the answer being no.
@@ -279,6 +294,16 @@ class BoltAdapter(GraphAdapter):
         # avoids depending on a column layout that differs between them and
         # has changed between versions of each.
         return any("Paper" in row and "id" in row for row in rows)
+
+    def diagnostics(self) -> dict[str, Any]:
+        return {
+            "schema_attempts": [
+                {"statement": stmt, "outcome": outcome} for stmt, outcome in self.schema_attempts
+            ],
+            "index_probe_attempts": [
+                {"statement": stmt, "outcome": outcome} for stmt, outcome in self.probe_attempts
+            ],
+        }
 
     def ingest(self, payload: IngestPayload, batch_size: int) -> IngestReport:
         started = time.perf_counter_ns()

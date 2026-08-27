@@ -132,6 +132,15 @@ class GraphAdapter(ABC):
         nothing, so parity here is not optional.
         """
 
+    def diagnostics(self) -> dict[str, Any]:
+        """Whatever the adapter learned that the caller could not observe.
+
+        Used to explain an unconfirmed index. An engine whose DDL is attempted
+        speculatively must report which spellings it rejected and why, or the
+        operator is left with "not confirmed" and nowhere to go.
+        """
+        return {}
+
     def schema_is_ready(self) -> bool | None:
         """Whether the paper-id index verifiably exists.
 

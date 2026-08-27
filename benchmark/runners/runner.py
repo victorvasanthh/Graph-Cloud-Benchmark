@@ -266,6 +266,16 @@ def _load(
     # flavours have to tolerate DDL errors to stay portable, so the index is
     # confirmed separately before anything is timed.
     index_verified = adapter.schema_is_ready()
+    if index_verified is not True:
+        # Attach what the adapter actually tried. "Index not confirmed" with no
+        # further detail is a dead end: it cannot distinguish DDL the engine
+        # rejected from introspection it does not implement, and those need
+        # different fixes.
+        for label, attempts in adapter.diagnostics().items():
+            for attempt in attempts:
+                results.manifest.notes.append(
+                    f"{target.name} {label}: {attempt['statement']} -> {attempt['outcome']}"
+                )
     if index_verified is False:
         note = (
             f"{target.name}: the Paper(id) index could not be confirmed after schema "
