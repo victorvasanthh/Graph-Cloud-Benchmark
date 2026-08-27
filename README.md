@@ -1,4 +1,4 @@
-# graph-cloud-benchmark
+# Graph-Cloud-Benchmark
 
 A reproducible, resource-parity benchmark harness for graph databases, built
 around the SNAP cit-HepTh citation network (27,770 nodes, 352,807 edges).
