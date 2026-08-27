@@ -69,15 +69,6 @@ def build_parser() -> argparse.ArgumentParser:
             "(0 disables). Guards against measuring a container that is still booting."
         ),
     )
-    parser.add_argument(
-        "--wait-seconds",
-        type=float,
-        default=60.0,
-        help=(
-            "wait this long for each target to answer a query before measuring "
-            "(0 disables). Guards against measuring a container that is still booting."
-        ),
-    )
     parser.add_argument("--dry-run", action="store_true", help="print the plan and exit")
     parser.add_argument("--quiet", action="store_true")
     return parser
