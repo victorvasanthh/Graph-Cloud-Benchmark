@@ -1,0 +1,41 @@
+# How the run is executed. Nothing here names a database or a query.
+
+run:
+  # Warmup iterations are executed and then excluded from the statistics. They
+  # exist so that the measured sample describes a warm cache rather than the
+  # first-touch behaviour of a page cache, a JIT and a connection pool all at
+  # once. They are still written to results/raw with a negative index, so the
+  # exclusion can be audited.
+  warmup_iterations: 5
+
+  # 100, not 30, and for one specific reason: nearest-rank p99 needs at least
+  # 100 samples before it is distinguishable from the maximum. Below that the
+  # harness still reports a p99, but flags it as equal to the max rather than
+  # letting it pass as a percentile. See benchmark/metrics/latency.py.
+  measured_iterations: 100
+
+  # Fixes the sampled paper ids and source/target pairs. Changing it changes
+  # the questions asked, so a run with a different seed is a different
+  # experiment and should not be compared line by line with an old one.
+  seed: 20260827
+
+  query_timeout_s: 120.0
+
+  # Batch size for bulk load. Large enough that per-round-trip overhead is not
+  # the thing being measured, small enough that a 1 GB free-tier instance can
+  # hold one batch of writes without swapping.
+  ingest_batch_size: 5000
+
+  # When false, a failing iteration is recorded and the run continues, which is
+  # usually what you want: a target that fails one workload should still be
+  # measured on the rest.
+  stop_on_error: false
+
+dataset:
+  name: cit-HepTh
+  source: https://snap.stanford.edu/data/cit-HepTh.html
+  # Both files are checksum-verified at load time against the digests in
+  # benchmark/datasets/cit_hepth.py.
+  files:
+    - cit-HepTh.txt.gz
+    - cit-HepTh-dates.txt.gz

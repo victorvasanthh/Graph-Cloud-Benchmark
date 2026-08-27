@@ -1,0 +1,83 @@
+# Which questions get asked, and with what parameters.
+#
+# The query text itself lives in benchmark/workloads/queries.py, all dialects
+# side by side, so that a reviewer can compare the Cypher against the AQL
+# without reading YAML. This file only chooses which of them run and how their
+# parameters are drawn.
+#
+# `concurrency` lists the client-concurrency levels a workload is measured at.
+# Each level opens that many independent connections and replays the same
+# parameter list across them, so the engine is asked the same questions under
+# more pressure rather than different questions.
+#
+# Concurrency is applied only to the cheap, high-frequency workloads. Running
+# 40 clients through the three-hop neighbourhood scan would spend hours
+# measuring queueing on a 1 vCPU instance, which is a property of the cap
+# rather than of the engine.
+
+workloads:
+  - name: point_lookup
+    params:
+      # 100 distinct paper ids, cycled across the iterations. Enough that no
+      # single row stays pinned in a hot cache for the whole run, few enough
+      # that the sample is dominated by steady-state rather than first-touch.
+      distinct_parameters: 100
+      concurrency: [1, 10, 40]
+
+  - name: one_hop
+    params:
+      # Expansion runs from the 200 highest out-degree papers. A uniformly
+      # random paper here cites about a dozen others, and timing that measures
+      # the round trip rather than the traversal.
+      top_n: 200
+      concurrency: [1, 10, 40]
+
+  - name: two_hop
+    params:
+      top_n: 200
+      concurrency: [1]
+
+  - name: neighbourhood_3hop
+    params:
+      top_n: 200
+      concurrency: [1]
+    # This is the workload most likely to time out on a 1 GB free tier, and a
+    # timeout is recorded as a failure rather than as a slow result. If it
+    # fails everywhere, that is a finding worth reporting; if you would rather
+    # measure something completable, lower the hop count in queries.py rather
+    # than quietly dropping the row.
+
+  - name: shortest_path
+    params:
+      # Pairs are pre-validated as reachable, so no engine is credited for
+      # failing fast on a disconnected pair.
+      distinct_parameters: 25
+      min_hops: 3
+      max_hops: 6
+      concurrency: [1]
+
+  - name: top_cited
+    params:
+      limit: 25
+      concurrency: [1]
+
+  - name: date_filtered_top
+    params:
+      limit: 25
+      concurrency: [1]
+      # Only about 41% of nodes carry a publication date in the source files,
+      # so these windows deliberately touch a minority of the graph.
+      windows:
+        - ["1995-01-01", "1996-01-01"]
+        - ["1997-01-01", "1998-01-01"]
+        - ["1999-01-01", "2000-01-01"]
+        - ["2001-01-01", "2002-01-01"]
+
+  - name: mixed_read_write
+    params:
+      # One write in ten. The write increments a counter property and never
+      # touches graph structure, so it cannot change what any other workload
+      # measures. This workload always runs last for the same reason.
+      write_ratio: 0.1
+      distinct_parameters: 100
+      concurrency: [1, 10, 40]

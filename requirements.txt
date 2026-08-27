@@ -1,0 +1,21 @@
+# Pinned exactly for reproducibility. Verified against PyPI on 2026-08-27.
+#
+# Driver note: we pin the last 5.x line of the official Neo4j driver rather
+# than 6.x. CognoDB advertises Bolt 5.0-5.4; driver 6.x adds Bolt 6.0 and drops
+# Bolt 4.1 support. Protocol negotiation should fall back to 5.4 either way,
+# but pinning inside the vendor's advertised range removes a variable from the
+# measurement. The same driver serves CognoDB, Neo4j, Memgraph and Aura.
+neo4j==5.28.4
+
+# FalkorDB speaks Cypher over RESP, not Bolt, so it needs its own client.
+falkordb==1.7.1
+
+# ArangoDB speaks AQL over HTTP.
+python-arango==8.3.4
+
+# Config, environment and reporting.
+PyYAML==6.0.3
+python-dotenv==1.2.3
+pandas==3.0.5
+matplotlib==3.11.1
+tabulate==0.10.0

@@ -1,0 +1,34 @@
+# ---- secrets: never commit ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# ---- dataset: downloaded, not vendored ----
+data/*
+!data/.gitkeep
+!data/README.md
+
+# ---- generated outputs are committed, working files are not ----
+results/raw/*.tmp
+results/**/*.partial
+
+# ---- python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---- os / editor ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

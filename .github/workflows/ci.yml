@@ -1,0 +1,80 @@
+name: ci
+
+# Lint and unit tests only. The measured benchmark is deliberately NOT run in
+# CI: shared runners have noisy neighbours and no resource guarantees, so any
+# latency measured here would describe GitHub's fleet rather than the
+# databases. Publishing a number produced on a runner would undo the entire
+# point of the resource-parity setup.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir -r requirements-dev.txt
+
+      - name: Lint
+        run: |
+          python -m ruff check .
+          python -m ruff format --check .
+
+      - name: Unit tests
+        # The integration marker covers everything needing a live database or
+        # the downloaded dataset; neither is present here.
+        run: python -m pytest -m "not integration"
+
+  dataset:
+    # Verifies the harness against the real dataset without touching a
+    # database. Separated so that an upstream SNAP outage fails one job with an
+    # obvious name rather than looking like a code regression.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir -r requirements-dev.txt
+
+      - name: Download and verify the dataset
+        run: python scripts/download_data.py
+
+      - name: Dataset integration tests
+        run: python -m pytest -m integration
+
+      - name: Configuration dry run
+        # Proves the shipped config parses and that no target is runnable
+        # without credentials. Exit code 1 is the expected "nothing configured"
+        # result here, so only a crash (2) is a failure.
+        run: |
+          python scripts/run_benchmark.py --dry-run || test $? -eq 1

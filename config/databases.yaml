@@ -1,0 +1,134 @@
+# The targets under measurement.
+#
+# `env` maps a logical setting onto the environment variable that carries its
+# value. No credential appears in this file, which is why it is committed.
+# `required` lists the settings whose absence makes the target unrunnable: a
+# target missing any of them is reported as "not configured" and skipped, never
+# silently omitted from the results.
+#
+# `resources` is documentation, not enforcement. The container caps are applied
+# by infra/docker-compose.yml and the managed tiers are whatever the vendor
+# provisions. The values are recorded here so that the manifest can state what
+# parity was *claimed*, and so a reader can check it against the tier the
+# vendor is actually selling today.
+#
+# IMPORTANT: the cpus/memory figures below are the parity target this harness
+# was written against, not measurements. Confirm them against the current free
+# tiers before quoting any result, and update infra/docker-compose.yml to match
+# if they have moved. A resource-parity benchmark whose parity assumption is
+# stale is just a benchmark.
+
+targets:
+  - name: cognodb-cloud
+    kind: bolt
+    display: CognoDB Cloud (c0)
+    tier: managed-free
+    env:
+      uri: COGNODB_URI
+      username: COGNODB_USERNAME
+      password: COGNODB_PASSWORD
+      region: COGNODB_REGION
+    required: [uri, password]
+    settings:
+      # CognoDB advertises Bolt 5.0-5.4 and Neo4j-compatible Cypher, so it gets
+      # the neo4j flavour for index DDL and bulk delete. If its DDL turns out
+      # to differ, change this line rather than the adapter.
+      flavour: neo4j
+    resources:
+      cpus: 1
+      memory_gb: 1
+      note: vendor-provisioned free tier; figure is the advertised allocation
+
+  - name: aura-free
+    kind: bolt
+    display: Neo4j AuraDB Free
+    tier: managed-free
+    env:
+      uri: AURA_URI
+      username: AURA_USERNAME
+      password: AURA_PASSWORD
+      region: AURA_REGION
+    required: [uri, password]
+    settings:
+      flavour: neo4j
+      database: neo4j
+    resources:
+      cpus: 1
+      memory_gb: 1
+      note: >-
+        Included as a calibration anchor rather than as a competitor. It is the
+        same engine as the self-hosted Neo4j target, so the gap between the two
+        measures what the managed-cloud wrapper costs, which is the only way to
+        tell a fast engine apart from a fast network path.
+
+  - name: neo4j-selfhosted
+    kind: bolt
+    display: Neo4j 5 (container, capped)
+    tier: self-hosted-capped
+    env:
+      uri: NEO4J_URI
+      username: NEO4J_USERNAME
+      password: NEO4J_PASSWORD
+    required: [uri, password]
+    settings:
+      flavour: neo4j
+      database: neo4j
+    resources:
+      cpus: 1
+      memory_gb: 2
+
+  - name: memgraph
+    kind: bolt
+    display: Memgraph (container, capped)
+    tier: self-hosted-capped
+    env:
+      uri: MEMGRAPH_URI
+      username: MEMGRAPH_USERNAME
+      password: MEMGRAPH_PASSWORD
+    required: [uri]
+    settings:
+      # Memgraph rejects Neo4j 5 constraint syntax and treats a repeated index
+      # creation as an error rather than a no-op.
+      flavour: memgraph
+    resources:
+      cpus: 1
+      memory_gb: 2
+      note: >-
+        In-memory by default. Its numbers should be read as what an in-memory
+        engine does with this working set, not as a like-for-like against
+        disk-backed stores.
+
+  - name: falkordb
+    kind: falkordb
+    display: FalkorDB (container, capped)
+    tier: self-hosted-capped
+    env:
+      host: FALKORDB_HOST
+      port: FALKORDB_PORT
+      password: FALKORDB_PASSWORD
+    required: [host]
+    settings:
+      graph: benchmark
+    resources:
+      cpus: 1
+      memory_gb: 2
+      note: In-memory, same caveat as Memgraph.
+
+  - name: arangodb
+    kind: arangodb
+    display: ArangoDB (container, capped)
+    tier: self-hosted-capped
+    env:
+      url: ARANGO_URL
+      username: ARANGO_USERNAME
+      password: ARANGO_PASSWORD
+    required: [url, password]
+    settings:
+      database: benchmark
+    resources:
+      cpus: 1
+      memory_gb: 2
+      note: >-
+        The only non-Cypher target. Its queries are hand-translated to AQL, so
+        every ArangoDB row carries translation risk that the Cypher rows do
+        not. See docs/methodology.md.

@@ -1,0 +1,114 @@
+# Self-hosted targets, capped to approximate the managed free tiers.
+#
+# The caps are the whole reason this file exists. Running Neo4j on an
+# unconstrained laptop and comparing it against a 1 vCPU cloud instance would
+# measure the laptop. `deploy.resources.limits` applies under both Compose v2
+# and Swarm; the `cpus`/`mem_limit` fallbacks below it cover older Compose,
+# which ignores the deploy block outside Swarm mode.
+#
+# CPU_LIMIT and MEMORY_LIMIT default to the parity target recorded in
+# config/databases.yaml. Override them in .env if the free tiers you are
+# comparing against have moved:
+#
+#     CPU_LIMIT=2 MEMORY_LIMIT=4g docker compose -f infra/docker-compose.yml up -d
+#
+# Verify what the daemon actually applied before trusting a run:
+#
+#     docker stats --no-stream
+#
+# The engines are all pinned to explicit image tags. `latest` would make the
+# run unreproducible the moment upstream pushes a new build, which is the same
+# failure the requirements pins exist to prevent.
+
+x-caps: &caps
+  deploy:
+    resources:
+      limits:
+        cpus: "${CPU_LIMIT:-1}"
+        memory: ${MEMORY_LIMIT:-2g}
+
+services:
+  neo4j:
+    <<: *caps
+    image: neo4j:5.26.4-community
+    container_name: gcb-neo4j
+    cpus: ${CPU_LIMIT:-1}
+    mem_limit: ${MEMORY_LIMIT:-2g}
+    ports:
+      - "7687:7687"
+      - "7474:7474"
+    environment:
+      # Read from the environment so no password lives in this file.
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:?set NEO4J_PASSWORD in .env}
+      NEO4J_server_memory_heap_initial__size: 512m
+      NEO4J_server_memory_heap_max__size: 512m
+      NEO4J_server_memory_pagecache_size: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:7474 >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    volumes:
+      - neo4j-data:/data
+
+  memgraph:
+    <<: *caps
+    image: memgraph/memgraph:2.22.0
+    container_name: gcb-memgraph
+    cpus: ${CPU_LIMIT:-1}
+    mem_limit: ${MEMORY_LIMIT:-2g}
+    # 7688 on the host so it can run alongside Neo4j, which owns 7687.
+    ports:
+      - "7688:7687"
+    command: ["--also-log-to-stderr", "--telemetry-enabled=false"]
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'RETURN 1;' | mgconsole || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    volumes:
+      - memgraph-data:/var/lib/memgraph
+
+  falkordb:
+    <<: *caps
+    image: falkordb/falkordb:v4.4.4
+    container_name: gcb-falkordb
+    cpus: ${CPU_LIMIT:-1}
+    mem_limit: ${MEMORY_LIMIT:-2g}
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    volumes:
+      - falkordb-data:/data
+
+  arangodb:
+    <<: *caps
+    image: arangodb:3.12.4
+    container_name: gcb-arangodb
+    cpus: ${CPU_LIMIT:-1}
+    mem_limit: ${MEMORY_LIMIT:-2g}
+    ports:
+      - "8529:8529"
+    environment:
+      ARANGO_ROOT_PASSWORD: ${ARANGO_PASSWORD:?set ARANGO_PASSWORD in .env}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8529/_api/version >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    volumes:
+      - arangodb-data:/var/lib/arangodb3
+
+volumes:
+  neo4j-data:
+  memgraph-data:
+  falkordb-data:
+  arangodb-data:

@@ -1,0 +1,36 @@
+{
+  // GitHub Codespaces definition. This is the only environment the
+  // containerised parts of this benchmark are meant to run in; nothing here
+  // expects Docker on a developer laptop.
+  //
+  // hostRequirements asks for the 2-core / 8 GB machine, which is the smallest
+  // Codespaces offers and is sufficient *because targets are measured one at a
+  // time*. Each capped database gets 1 vCPU and 2 GB, leaving a full core and
+  // ~6 GB for the benchmark client and the OS. Running all four at once would
+  // need 4 vCPU and 8 GB and does not fit - see scripts/run_suite.sh.
+  //
+  // Raising these values moves the Codespace to a larger, faster-billing
+  // machine type. Do not raise them without deciding that deliberately.
+  "name": "graph-cloud-benchmark",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    }
+  },
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  "postCreateCommand": "pip install --no-cache-dir -r requirements-dev.txt && python scripts/download_data.py",
+  "remoteEnv": {
+    "PYTHONUNBUFFERED": "1"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "charliermarsh.ruff"]
+    }
+  }
+}
