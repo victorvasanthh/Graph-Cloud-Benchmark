@@ -82,16 +82,32 @@ class TestShortestPathMapping:
         assert "..8" in text
         assert ":CITES" in text
 
-    def test_falkordb_uses_the_shared_shortest_path(self, workload):
-        # FalkorDB does provide shortestPath(). Its documented restrictions -
-        # endpoints resolved beforehand, no property filter inside the pattern
-        # - are why the shared statement is written the way it is.
+    def test_falkordb_uses_its_native_shortest_path_procedure(self, workload):
+        # FalkorDB does have shortestPath(), but not for the undirected
+        # variable-length form this workload needs - the smoke run rejected it.
+        # algo.SPpaths is the engine's own shortest-path procedure and takes an
+        # explicit direction, so the same question can be asked natively.
         adapter = FalkorDBAdapter(
             TargetConfig(name="f", kind="falkordb", display="f", tier="test", settings={})
         )
         text = adapter.statement_for(workload.statements)
-        assert "shortestPath(" in text
+        assert "algo.SPpaths" in text
+        # Endpoints still resolved in a preceding MATCH, which SPpaths requires.
         assert "MATCH (a:Paper {id: $source}), (b:Paper {id: $target})" in text
+
+    def test_falkordb_shortest_path_asks_the_same_question(self, workload):
+        adapter = FalkorDBAdapter(
+            TargetConfig(name="f", kind="falkordb", display="f", tier="test", settings={})
+        )
+        text = adapter.statement_for(workload.statements)
+        # Same relationship type, same 8-hop bound, same undirected traversal,
+        # same single-row hop count as every other engine. A native procedure
+        # is a fair substitute only if it is answering the identical question.
+        assert "'CITES'" in text
+        assert "maxLen: 8" in text
+        assert "relDirection: 'both'" in text
+        assert "pathCount: 1" in text
+        assert "AS hops" in text
 
     def test_every_engine_resolves_a_statement(self, workload):
         for adapter in (

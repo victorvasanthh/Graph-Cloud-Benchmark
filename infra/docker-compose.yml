@@ -109,11 +109,33 @@ services:
     environment:
       ARANGO_ROOT_PASSWORD: ${ARANGO_PASSWORD:?set ARANGO_PASSWORD in .env}
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8529/_api/version >/dev/null || exit 1"]
+      # `curl -sf` was wrong, and wrong in a way that never recovers.
+      #
+      # ArangoDB requires authentication on every database API by default, so
+      # an unauthenticated GET /_api/version answers 401. `-f` makes curl exit
+      # non-zero on any status >= 400, so the check failed forever while the
+      # server sat there logging "ready for business". The 300s wait then
+      # expired and the target was skipped as unhealthy.
+      #
+      # A 401 is proof the server is up and answering, which is exactly what a
+      # start gate needs to know. Dropping `-f` makes any HTTP response count
+      # as alive; connection-refused still fails, which is the case that
+      # matters. The arangosh fallback covers an image without curl - it is
+      # part of the distribution, so it is always present. `$$` keeps Compose
+      # from interpolating the variable before the container sees it.
+      test:
+        - CMD-SHELL
+        - >-
+          curl -s -o /dev/null http://127.0.0.1:8529/_api/version
+          || arangosh --server.endpoint tcp://127.0.0.1:8529
+          --server.username root --server.password "$$ARANGO_ROOT_PASSWORD"
+          --javascript.execute-string "db._version()" >/dev/null 2>&1
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 30
-      start_period: 20s
+      # ArangoDB initialises its system collections on first boot, which on a
+      # 1 vCPU cap takes appreciably longer than the other three engines.
+      start_period: 60s
     volumes:
       - arangodb-data:/var/lib/arangodb3
 

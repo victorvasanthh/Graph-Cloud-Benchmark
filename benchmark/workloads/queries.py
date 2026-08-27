@@ -242,6 +242,20 @@ SHORTEST_PATH = Workload(
             "MATCH path = shortestPath((a)-[:CITES*..8]-(b)) "
             "RETURN length(path) AS hops"
         ),
+        # FalkorDB has shortestPath(), but its planner rejects the undirected
+        # variable-length form this workload needs. Its native equivalent is
+        # algo.SPpaths with relDirection 'both' - the same question asked of
+        # the engine's own shortest-path procedure, filtered to the same
+        # relationship type and bounded at the same 8 hops, returning the same
+        # single row. `pathCount: 1` asks for one shortest path, matching what
+        # shortestPath() returns everywhere else.
+        "cypher_falkordb": (
+            "MATCH (a:Paper {id: $source}), (b:Paper {id: $target}) "
+            "CALL algo.SPpaths({sourceNode: a, targetNode: b, relTypes: ['CITES'], "
+            "relDirection: 'both', maxLen: 8, pathCount: 1}) "
+            "YIELD path "
+            "RETURN length(path) AS hops"
+        ),
         # Memgraph has no shortestPath(). Its equivalent is a BFS expansion,
         # which returns exactly one shortest path - the same answer by the same
         # definition, reached through the engine's own operator rather than

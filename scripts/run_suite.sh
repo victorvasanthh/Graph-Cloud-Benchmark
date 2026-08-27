@@ -62,19 +62,32 @@ MANAGED=(cognodb-cloud aura-free)
 
 PRODUCED=()
 
-wait_healthy() {
-  local service="$1" deadline=$((SECONDS + 300))
-  echo "  waiting for ${service} to report healthy..."
-  while (( SECONDS < deadline )); do
+# Readiness is decided by the harness, not by the container health check.
+#
+# A health check answers "does this image's chosen probe pass", which is a
+# per-image guess: curl here, mgconsole there, redis-cli elsewhere. The
+# ArangoDB one was wrong for weeks - an unauthenticated GET answers 401 and
+# `curl -f` calls that a failure - so the gate said "not ready" while the
+# server logged "ready for business" and the suite skipped the target.
+#
+# What the benchmark needs to know is narrower and answerable: can the adapter
+# the runner uses connect and execute a statement? The container health state
+# is still reported, because `docker ps` should tell the truth, but it does not
+# decide whether the run proceeds.
+wait_ready() {
+  local service="$1" target="$2"
+  echo "  waiting for ${target} to accept a query..."
+  if python scripts/wait_for_target.py "$target" --timeout 300; then
     local state
     state="$("${COMPOSE[@]}" ps --format '{{.Health}}' "$service" 2>/dev/null | head -1 || true)"
-    case "$state" in
-      healthy) echo "  ${service} healthy"; return 0 ;;
-      unhealthy) echo "  ${service} reported unhealthy" >&2; return 1 ;;
-    esac
-    sleep 5
-  done
-  echo "  ${service} did not become healthy within 300s" >&2
+    if [[ -n "$state" && "$state" != "healthy" ]]; then
+      # Worth surfacing rather than swallowing: the engine is usable, so the
+      # probe is the thing that is wrong, and somebody should fix it.
+      echo "  note: ${service} answers queries but its health check reports '${state}'" >&2
+    fi
+    return 0
+  fi
+  echo "  ${target} never accepted a query within 300s" >&2
   "${COMPOSE[@]}" logs --tail=40 "$service" >&2 || true
   return 1
 }
@@ -97,10 +110,10 @@ for pair in "${SELF_HOSTED[@]}"; do
 
   "${COMPOSE[@]}" up -d "$service"
 
-  if ! wait_healthy "$service"; then
-    # A container that will not start under its cap is a finding about that
-    # engine at that cap, not a reason to abandon the suite.
-    echo "  SKIPPED: ${target} never became healthy under its resource cap" >&2
+  if ! wait_ready "$service" "$target"; then
+    # A container that will not serve queries under its cap is a finding about
+    # that engine at that cap, not a reason to abandon the suite.
+    echo "  SKIPPED: ${target} never became usable under its resource cap" >&2
     teardown "$service"
     continue
   fi

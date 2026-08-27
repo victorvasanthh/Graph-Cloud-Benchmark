@@ -135,7 +135,7 @@ every place they are not, and why.
 |---|---|---|
 | Neo4j, Aura, CognoDB | `cypher` | - |
 | Memgraph | `cypher_memgraph` -> `cypher` | `shortest_path` |
-| FalkorDB | `cypher_falkordb` -> `cypher` | - |
+| FalkorDB | `cypher_falkordb` -> `cypher` | `shortest_path` |
 | ArangoDB | `aql` | everything |
 
 A missing specialised statement falls back to generic Cypher. That is
@@ -169,6 +169,40 @@ Its restrictions - endpoints resolved before the call, no property filter
 inside the pattern - are why the shared statement resolves `a` and `b` in a
 separate `MATCH` rather than inlining them. Neo4j is equally happy with that
 form, so one statement serves both.
+
+**`shortest_path` on FalkorDB.** FalkorDB has `shortestPath()`, but its
+planner rejects the undirected variable-length pattern this workload uses. Its
+native equivalent is the `algo.SPpaths` procedure, which takes direction as an
+explicit argument:
+
+```cypher
+MATCH (a:Paper {id: $source}), (b:Paper {id: $target})
+CALL algo.SPpaths({sourceNode: a, targetNode: b, relTypes: ['CITES'],
+                   relDirection: 'both', maxLen: 8, pathCount: 1})
+YIELD path
+RETURN length(path) AS hops
+```
+
+Same relationship type, same 8-hop bound, same undirected traversal, same
+single-row hop count. A native procedure is a fair substitute only when it
+answers the identical question, and a test asserts each of those four
+properties rather than trusting the prose.
+
+**`neighbourhood_3hop` on FalkorDB: a documented failure, not a workaround.**
+FalkorDB times out on the undirected three-hop neighbourhood count under the
+1 vCPU / 2 GB cap. It has an `algo.bfs` procedure that would complete easily,
+and swapping it in would turn a red cell green — but `algo.bfs(start, depth,
+relType)` takes no direction argument and follows outgoing edges only. It
+would compute the *directed* three-hop neighbourhood, which is a strictly
+smaller set and a different question. A benchmark that quietly answers an
+easier question on one engine is worse than one with a gap in it, so the
+timeout stands and is reported as a timeout.
+
+Two honest options remain, and both are the reader's to take rather than
+ours: accept the gap and read the row as "FalkorDB could not complete this
+formulation at this cap", or lower the hop bound **for every engine** and
+re-run, which measures something completable at the cost of measuring
+something shallower. What is not available is lowering it for FalkorDB alone.
 
 **Index verification.** Creating the index and *having* the index are
 different claims. Memgraph rejects Neo4j's constraint syntax and treats a
