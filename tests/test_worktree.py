@@ -76,6 +76,20 @@ class TestSmokeVersusResult:
     def test_real_run_artifacts(self, path):
         assert classify(path) == RESULT
 
+    @pytest.mark.parametrize(
+        "path",
+        [
+            "results/summary/merged-smoke-20260827T181837Z-neo4j-selfhosted.json",
+            "charts/latency-merged-smoke-20260827T181837Z-neo4j-selfhosted.png",
+            "docs/report-merged-smoke-20260827T181837Z-neo4j-selfhosted.md",
+        ],
+    )
+    def test_merged_smoke_artifacts_are_still_smoke(self, path):
+        # make_report writes `merged-smoke-...` when joining runs. The first
+        # ignore patterns anchored on a leading `smoke-` and missed every one
+        # of these, so they were committed.
+        assert classify(path) == SMOKE
+
     def test_smoke_is_checked_before_result(self):
         # Both live under results/. Order matters, and getting it backwards
         # would silently reclassify every smoke artifact as data.
@@ -175,9 +189,9 @@ class TestGitignoreCoversSmoke:
         # Without these the artifacts reappear on every smoke run and the tree
         # is never clean, which is the state that blocked the last benchmark.
         for pattern in (
-            "results/raw/smoke-*",
-            "results/summary/smoke-*",
+            "results/raw/*smoke-*",
+            "results/summary/*smoke-*",
             "charts/*smoke-*",
-            "docs/report-smoke-*",
+            "docs/*smoke-*",
         ):
             assert pattern in text, f"{pattern} missing from .gitignore"

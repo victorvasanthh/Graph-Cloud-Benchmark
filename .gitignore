@@ -20,10 +20,10 @@ results/**/*.partial
 # file under results/raw is the record of a real run, and a smoke artifact
 # sitting beside one is an invitation to read it as data. The `smoke-` prefix
 # comes from run_suite.sh, which stamps it onto every artifact of a --smoke run.
-results/raw/smoke-*
-results/summary/smoke-*
+results/raw/*smoke-*
+results/summary/*smoke-*
 charts/*smoke-*
-docs/report-smoke-*
+docs/*smoke-*
 
 # ---- python ----
 __pycache__/
