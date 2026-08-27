@@ -198,19 +198,22 @@ def render_ingest_table(summary: dict[str, Any], table_format: str = "github") -
         if record.get("status") != "ok":
             reason = STATUS_LABEL.get(record.get("status", ""), record.get("status", "?"))
             note = (record.get("note") or "")[:70]
-            rows.append([target, "-", "-", "-", f"{reason} - {note}" if note else reason])
+            rows.append([target, "-", "-", "-", "-", f"{reason} - {note}" if note else reason])
             continue
+        index = record.get("index_verified")
+        index_text = {True: "yes", False: "NO", None: "unknown"}.get(index, "unknown")
         rows.append(
             [
                 target,
                 f"{record['p50_ms'] / 1000:,.1f}",
                 f"{record.get('edges_per_second', 0):,.0f}",
                 f"{record.get('nodes_loaded', 0):,} / {record.get('edges_loaded', 0):,}",
+                index_text,
                 "verified",
             ]
         )
 
-    headers = ["target", "load s", "edges/s", "nodes / edges held", "status"]
+    headers = ["target", "load s", "edges/s", "nodes / edges held", "indexed", "status"]
     table = tabulate(rows, headers=headers, tablefmt=table_format, disable_numparse=True)
     return "\n".join(
         [
@@ -219,7 +222,10 @@ def render_ingest_table(summary: dict[str, Any], table_format: str = "github") -
             "Wall time for the batched load, the implied edge throughput, and "
             "the counts the server itself reported afterwards. A target whose "
             "counts did not match the dataset is marked failed: its read "
-            "numbers would describe a smaller graph.",
+            "numbers would describe a smaller graph. `indexed` is the "
+            "separately confirmed presence of the Paper(id) index - a `NO` "
+            "there means that target was measured without the index every "
+            "other target had, and its read rows are not comparable.",
             "",
             table,
         ]

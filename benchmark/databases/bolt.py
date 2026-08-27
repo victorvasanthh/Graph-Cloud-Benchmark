@@ -30,6 +30,13 @@ class _Flavour:
     schema: tuple[str, ...]
     reset: tuple[str, ...]
     version_probes: tuple[str, ...]
+    #: Query dialects this flavour accepts, most specific first. Memgraph reads
+    #: Cypher but is not Neo4j: it has no shortestPath() and expresses the same
+    #: idea with a BFS expansion, so it needs a way to opt into different text
+    #: for the statements that actually differ while sharing the rest.
+    dialects: tuple[str, ...] = ("cypher",)
+    #: Statement that lists indexes, used to prove the index really exists.
+    index_probe: str = ""
     #: Memgraph rejects `CREATE CONSTRAINT ... IF NOT EXISTS`, and re-running a
     #: constraint that already exists is an error there rather than a no-op.
     #: Schema DDL is therefore allowed to fail without failing the run.
@@ -46,6 +53,8 @@ _NEO4J = _Flavour(
         "CALL dbms.components() YIELD name, versions, edition "
         "RETURN name + ' ' + versions[0] + ' (' + edition + ')' AS version",
     ),
+    dialects=("cypher",),
+    index_probe="SHOW INDEXES YIELD labelsOrTypes, properties RETURN labelsOrTypes, properties",
 )
 
 _MEMGRAPH = _Flavour(
@@ -55,6 +64,8 @@ _MEMGRAPH = _Flavour(
     ),
     reset=("MATCH (n) DETACH DELETE n",),
     version_probes=("SHOW VERSION",),
+    dialects=("cypher_memgraph", "cypher"),
+    index_probe="SHOW INDEX INFO",
     tolerate_schema_errors=True,
 )
 
@@ -92,6 +103,9 @@ class BoltAdapter(GraphAdapter):
             )
         self.flavour_name = flavour_name
         self.flavour = FLAVOURS[flavour_name]
+        # Instance-level, so one adapter class can serve engines whose Cypher
+        # diverges without the registry needing a class per product.
+        self.dialects = self.flavour.dialects
         self.database = self.settings.get("database") or None
         self._driver: Any = None
 
@@ -167,6 +181,22 @@ class BoltAdapter(GraphAdapter):
                         raise WorkloadFailure(
                             f"{self.name}: schema statement failed: {statement}: {exc}"
                         ) from exc
+
+    def schema_is_ready(self) -> bool | None:
+        probe = self.flavour.index_probe
+        if not probe:
+            return None
+        try:
+            with self._session() as session:
+                rows = [str(record.values()) for record in session.run(probe)]
+        except Exception:
+            # Not being able to ask is different from the answer being no.
+            return None
+        # Both SHOW INDEXES (Neo4j) and SHOW INDEX INFO (Memgraph) return the
+        # label and property somewhere in the row; matching on both together
+        # avoids depending on a column layout that differs between them and
+        # has changed between versions of each.
+        return any("Paper" in row and "id" in row for row in rows)
 
     def ingest(self, payload: IngestPayload, batch_size: int) -> IngestReport:
         started = time.perf_counter_ns()

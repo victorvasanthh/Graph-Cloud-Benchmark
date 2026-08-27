@@ -19,6 +19,16 @@
 # The engines are all pinned to explicit image tags. `latest` would make the
 # run unreproducible the moment upstream pushes a new build, which is the same
 # failure the requirements pins exist to prevent.
+#
+# Every tag below was checked against the registry on 2026-08-27 rather than
+# recalled. An earlier revision carried falkordb:v4.4.4, which has never
+# existed - the pull failed and the target never ran. The other three were
+# real but stale by anything from six months to a major version.
+#
+# They are updated together on purpose. Measuring a current FalkorDB against
+# a two-year-old Memgraph would be a fairness problem wearing the costume of
+# a version bump. Whatever the pins are, they should be the same generation,
+# and the server versions actually contacted are recorded in the run manifest.
 
 x-caps: &caps
   deploy:
@@ -30,7 +40,7 @@ x-caps: &caps
 services:
   neo4j:
     <<: *caps
-    image: neo4j:5.26.4-community
+    image: neo4j:5.26.30-community
     container_name: gcb-neo4j
     cpus: ${CPU_LIMIT:-1}
     mem_limit: ${MEMORY_LIMIT:-2g}
@@ -54,7 +64,7 @@ services:
 
   memgraph:
     <<: *caps
-    image: memgraph/memgraph:2.22.0
+    image: memgraph/memgraph:3.12.0
     container_name: gcb-memgraph
     cpus: ${CPU_LIMIT:-1}
     mem_limit: ${MEMORY_LIMIT:-2g}
@@ -73,7 +83,7 @@ services:
 
   falkordb:
     <<: *caps
-    image: falkordb/falkordb:v4.4.4
+    image: falkordb/falkordb:v4.20.4
     container_name: gcb-falkordb
     cpus: ${CPU_LIMIT:-1}
     mem_limit: ${MEMORY_LIMIT:-2g}
@@ -90,7 +100,7 @@ services:
 
   arangodb:
     <<: *caps
-    image: arangodb:3.12.4
+    image: arangodb:3.12.10.1
     container_name: gcb-arangodb
     cpus: ${CPU_LIMIT:-1}
     mem_limit: ${MEMORY_LIMIT:-2g}

@@ -126,6 +126,60 @@ choices there (paper id as `_key` for primary-index lookups, an indexed
 integer `pid` alongside) were made to avoid handicapping it; they are
 documented in `benchmark/databases/arangodb.py` and are open to challenge.
 
+### Dialect mapping
+
+Four engines, three dialects. Most statements are shared; the table records
+every place they are not, and why.
+
+| Engine | Dialect chain | Diverges on |
+|---|---|---|
+| Neo4j, Aura, CognoDB | `cypher` | - |
+| Memgraph | `cypher_memgraph` -> `cypher` | `shortest_path` |
+| FalkorDB | `cypher_falkordb` -> `cypher` | - |
+| ArangoDB | `aql` | everything |
+
+A missing specialised statement falls back to generic Cypher. That is
+convenient and it is exactly how the smoke run found a bug: Memgraph was
+silently handed Neo4j's `shortestPath()`, which it does not implement.
+
+**`shortest_path` on Memgraph.** Memgraph has no `shortestPath()` function.
+Its documented equivalent is a BFS expansion, which by definition returns one
+shortest path:
+
+```cypher
+-- Neo4j / Aura / CognoDB / FalkorDB
+MATCH (a:Paper {id: $source}), (b:Paper {id: $target})
+MATCH path = shortestPath((a)-[:CITES*..8]-(b))
+RETURN length(path) AS hops
+
+-- Memgraph
+MATCH path = (a:Paper {id: $source})-[:CITES *BFS ..8]-(b:Paper {id: $target})
+RETURN size(relationships(path)) AS hops
+```
+
+Both are the engine's own shortest-path operator, both are bounded at 8 hops,
+both filter to `:CITES`, and both return a single row holding the hop count.
+This is `idiomatic` equivalence, not `identical`: Memgraph is not being asked
+an easier question, it is being asked the same question in the only way it
+accepts. Writing a manual traversal to emulate `shortestPath()` would have
+been worse - it would measure our emulation rather than the engine.
+
+FalkorDB, despite not being a Bolt server, *does* provide `shortestPath()`.
+Its restrictions - endpoints resolved before the call, no property filter
+inside the pattern - are why the shared statement resolves `a` and `b` in a
+separate `MATCH` rather than inlining them. Neo4j is equally happy with that
+form, so one statement serves both.
+
+**Index verification.** Creating the index and *having* the index are
+different claims. Memgraph rejects Neo4j's constraint syntax and treats a
+repeated index creation as an error, so its flavour has to tolerate DDL
+failures to stay portable - which on its own would let a run proceed
+unindexed. Every adapter therefore confirms the index separately after schema
+setup (`SHOW INDEXES`, `SHOW INDEX INFO`, `CALL db.indexes()`, or the
+collection's index list), and the result is carried into the report as an
+`indexed` column. A `NO` there means that target was measured without the
+index every other target had, and its read rows are not comparable.
+
 **Schema parity is enforced.** Every engine gets an equivalent index on the
 paper id before any measurement, and index creation is never timed.
 

@@ -234,10 +234,22 @@ SHORTEST_PATH = Workload(
     defaults={"distinct_parameters": 25, "min_hops": 3, "max_hops": 6},
     build_params=_connected_pairs,
     statements={
+        # Neo4j, Aura, CognoDB and FalkorDB all provide shortestPath(). The
+        # endpoints are resolved in a separate MATCH and the pattern carries no
+        # property filter, which FalkorDB requires and Neo4j is happy with.
         "cypher": (
             "MATCH (a:Paper {id: $source}), (b:Paper {id: $target}) "
             "MATCH path = shortestPath((a)-[:CITES*..8]-(b)) "
             "RETURN length(path) AS hops"
+        ),
+        # Memgraph has no shortestPath(). Its equivalent is a BFS expansion,
+        # which returns exactly one shortest path - the same answer by the same
+        # definition, reached through the engine's own operator rather than
+        # through an emulation we wrote. `size(relationships(path))` is the
+        # portable spelling of `length(path)` here.
+        "cypher_memgraph": (
+            "MATCH path = (a:Paper {id: $source})-[:CITES *BFS ..8]-(b:Paper {id: $target}) "
+            "RETURN size(relationships(path)) AS hops"
         ),
         "aql": (
             'LET source = CONCAT("papers/", @source) '

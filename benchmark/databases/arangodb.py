@@ -114,6 +114,16 @@ class ArangoDBAdapter(GraphAdapter):
         if ("pid",) not in existing:
             papers.add_persistent_index(fields=["pid"], name="paper_pid")
 
+    def schema_is_ready(self) -> bool | None:
+        try:
+            papers = self._require_db().collection(PAPERS)
+            fields = {tuple(index.get("fields", ())) for index in papers.indexes()}
+        except Exception:
+            return None
+        # `_key` carries the primary index and needs no declaration; `pid` is
+        # the one this harness has to create.
+        return ("pid",) in fields
+
     def ingest(self, payload: IngestPayload, batch_size: int) -> IngestReport:
         db = self._require_db()
         papers = db.collection(PAPERS)

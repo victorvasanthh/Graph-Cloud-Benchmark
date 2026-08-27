@@ -246,6 +246,24 @@ def _load(
     adapter.reset()
     adapter.prepare_schema()
 
+    # prepare_schema succeeding is not the same as the index existing. Some
+    # flavours have to tolerate DDL errors to stay portable, so the index is
+    # confirmed separately before anything is timed.
+    index_verified = adapter.schema_is_ready()
+    if index_verified is False:
+        note = (
+            f"{target.name}: the Paper(id) index could not be confirmed after schema "
+            f"setup. Every other engine is measured with that index, so these read "
+            f"numbers are not comparable and must not be published as a like-for-like."
+        )
+        results.manifest.notes.append(note)
+        report.say(f"  WARNING {note}")
+    elif index_verified is None:
+        results.manifest.notes.append(
+            f"{target.name}: index presence could not be verified on this engine; "
+            f"schema parity is assumed rather than confirmed"
+        )
+
     run = WorkloadRun(target=target.name, workload=INGEST_WORKLOAD)
     try:
         ingest_report = adapter.ingest(payload, config.run.ingest_batch_size)
@@ -271,6 +289,7 @@ def _load(
         # mentally divided out of a wall time that depends on the dataset size.
         "edges_per_second": (ingest_report.edges / seconds) if seconds > 0 else 0.0,
         "nodes_per_second": (ingest_report.nodes / seconds) if seconds > 0 else 0.0,
+        "index_verified": index_verified,
     }
 
     if not ingest_report.matches(payload.node_count, payload.edge_count):

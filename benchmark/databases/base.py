@@ -132,6 +132,21 @@ class GraphAdapter(ABC):
         nothing, so parity here is not optional.
         """
 
+    def schema_is_ready(self) -> bool | None:
+        """Whether the paper-id index verifiably exists.
+
+        True, False, or None when the engine gives us no way to tell.
+
+        This exists because `prepare_schema` succeeding is not the same as the
+        index existing. Memgraph, for one, rejects DDL that Neo4j accepts and
+        treats a repeated index creation as an error, so its flavour tolerates
+        schema failures - which would let a run proceed unindexed. An engine
+        measured without the index every other engine got is not slow, it is
+        being asked a different question, and the resulting table would be
+        wrong in the direction that looks most like a finding.
+        """
+        return None
+
     @abstractmethod
     def ingest(self, payload: IngestPayload, batch_size: int) -> IngestReport:
         """Bulk-load the citation graph and report what the server counted."""

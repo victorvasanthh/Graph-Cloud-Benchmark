@@ -131,6 +131,17 @@ class FalkorDBAdapter(GraphAdapter):
                 errors.append(f"{statement}: {exc}")
         raise WorkloadFailure(f"{self.name}: could not create the Paper(id) index: {errors}")
 
+    def schema_is_ready(self) -> bool | None:
+        try:
+            result = self._require_graph().query("CALL db.indexes()")
+        except Exception:
+            return None
+        for row in result.result_set or []:
+            rendered = str(row)
+            if "Paper" in rendered and "id" in rendered:
+                return True
+        return False
+
     def ingest(self, payload: IngestPayload, batch_size: int) -> IngestReport:
         graph = self._require_graph()
         started = time.perf_counter_ns()

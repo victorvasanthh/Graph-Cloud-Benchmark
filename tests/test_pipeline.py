@@ -87,6 +87,8 @@ class MemoryStore:
         self.lie_about: set[str] = set()
         #: Edges to drop during ingest, to prove load verification fires.
         self.drop_edges = 0
+        #: What schema_is_ready() should report for this target.
+        self.index_state: bool | None = True
         #: Every parameter dict any connection was asked to execute.
         self.seen_params: list[dict[str, Any]] = []
 
@@ -140,6 +142,9 @@ class MemoryAdapter(GraphAdapter):
 
     def prepare_schema(self) -> None:
         self.schema_ready = True
+
+    def schema_is_ready(self) -> bool | None:
+        return self.store.index_state
 
     def ingest(self, payload: IngestPayload, batch_size: int) -> IngestReport:
         store = self.store
@@ -422,6 +427,37 @@ class TestConcurrency:
 
 
 class TestIntegrityChecks:
+    def test_a_missing_index_is_reported_not_measured_silently(self, toy_graph, monkeypatch):
+        def configure(name: str, store: MemoryStore) -> None:
+            if name == "engine-b":
+                store.index_state = False
+
+        built = AdapterFactory(configure)
+        monkeypatch.setitem(registry.ADAPTERS, "memory", MemoryAdapter)
+        monkeypatch.setattr("benchmark.runners.runner.build_adapter", built)
+
+        results = run_benchmark(make_config(["point_lookup"]), toy_graph)
+        # An engine measured without the index every other engine got is not
+        # slow, it is answering a different question - and the difference would
+        # look exactly like a performance finding.
+        assert any(
+            "index could not be confirmed" in note for note in results.manifest.notes
+        ), results.manifest.notes
+        assert results.find("engine-b", "ingest").scale["index_verified"] is False
+
+    def test_unverifiable_index_is_recorded_as_assumed(self, toy_graph, monkeypatch):
+        def configure(name: str, store: MemoryStore) -> None:
+            store.index_state = None
+
+        built = AdapterFactory(configure)
+        monkeypatch.setitem(registry.ADAPTERS, "memory", MemoryAdapter)
+        monkeypatch.setattr("benchmark.runners.runner.build_adapter", built)
+
+        results = run_benchmark(make_config(["point_lookup"]), toy_graph)
+        # "Could not check" and "checked and it is missing" are different
+        # claims and the manifest must not conflate them.
+        assert any("assumed rather than confirmed" in n for n in results.manifest.notes)
+
     def test_a_partial_load_fails_the_run_rather_than_scoring_well(self, toy_graph, monkeypatch):
         def configure(name: str, store: MemoryStore) -> None:
             if name == "engine-b":
