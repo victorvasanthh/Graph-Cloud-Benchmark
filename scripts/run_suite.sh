@@ -41,7 +41,12 @@ if [[ $SMOKE -eq 1 ]]; then
   # Deliberately tiny. A smoke run proves connectivity, schema, ingest
   # verification and every query dialect parse; it is not a measurement and
   # its output must never be quoted as one.
-  EXTRA_ARGS+=(--iterations 1 --warmup 0)
+  # A tighter bound than the full benchmark's, because the job of a smoke run
+  # is to answer "does this work" in minutes. A workload that needs longer than
+  # 30s to return once is not going to prove the plumbing any better by being
+  # given ten times as long; it will be recorded as TIMEOUT and the suite moves
+  # on. The full benchmark keeps its own 120s bound from config/benchmark.yaml.
+  EXTRA_ARGS+=(--iterations 1 --warmup 0 --query-timeout "${SMOKE_QUERY_TIMEOUT:-30}")
   STAMP="smoke-${STAMP}"
   echo "SMOKE RUN: 1 iteration, no warmup. Results prove the plumbing, not performance."
 fi

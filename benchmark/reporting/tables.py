@@ -21,6 +21,10 @@ STATUS_LABEL = {
     "unavailable": "not reachable",
     "unsupported": "n/a",
     "failed": "failed",
+    # Kept distinct from "failed" on purpose: the engine accepted the query and
+    # was still working when the bound expired. That is a statement about the
+    # engine at this resource cap, not about the query being wrong.
+    "timeout": "TIMEOUT",
     "skipped": "not configured",
 }
 

@@ -234,7 +234,12 @@ class BoltAdapter(GraphAdapter):
 
     # -- measurement -------------------------------------------------------
 
-    def run(self, statement: str, params: dict[str, Any]) -> int:
+    def run(self, statement: str, params: dict[str, Any], timeout_s: float | None = None) -> int:
+        # `timeout_s` is deliberately ignored here. The driver exposes a
+        # timeout only on an explicit transaction, and wrapping these
+        # auto-commit statements in one would add a round trip to every
+        # measurement - changing what is measured in order to bound it. The
+        # runner's wall-clock watchdog bounds this engine instead.
         try:
             with self._session() as session:
                 # Parameters go in positionally as a mapping, never as

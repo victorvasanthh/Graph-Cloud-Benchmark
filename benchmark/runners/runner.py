@@ -43,7 +43,7 @@ from dataclasses import dataclass
 from typing import Any, TextIO
 
 from ..core.config import BenchmarkConfig, TargetConfig, WorkloadConfig
-from ..core.errors import ConnectionFailure, WorkloadFailure
+from ..core.errors import ConnectionFailure, QueryTimeout, WorkloadFailure
 from ..core.results import BenchmarkResults, Iteration, RunManifest, WorkloadRun, new_run_id
 from ..core.timing import ns_to_ms, timed
 from ..databases import GraphAdapter, IngestPayload, build_adapter
@@ -51,6 +51,7 @@ from ..datasets.cit_hepth import CitationGraph
 from ..workloads import Workload
 from ..workloads.base import execution_params
 from ..workloads.queries import BY_NAME
+from .deadline import Deadline
 
 INGEST_WORKLOAD = "ingest"
 
@@ -229,6 +230,7 @@ def _measure_target(
                     concurrency=level,
                     results=results,
                     report=report,
+                    workload_config=workload_config,
                 )
     finally:
         adapter.close()
@@ -330,14 +332,46 @@ def _verify_counts(
         report.say(f"  WARNING {note}")
 
 
+def _timeout_for(workload_config: WorkloadConfig, config: BenchmarkConfig) -> float | None:
+    """Per-workload bound if declared, otherwise the run-wide one.
+
+    A per-workload override exists because the workloads are not comparable in
+    cost: a point lookup that takes a second is broken, while a three-hop
+    neighbourhood scan legitimately takes far longer. One global number would
+    have to be set to the slowest, which would stop bounding the fast ones.
+    """
+    override = workload_config.params.get("timeout_s")
+    if override is not None:
+        return float(override)
+    return config.run.query_timeout_s
+
+
+def _timed_out(iteration: Iteration) -> bool:
+    return bool(iteration.error and iteration.error.startswith(TIMEOUT_MARKER))
+
+
 def _statement_for(adapter: GraphAdapter, workload: Workload, params: dict[str, Any]) -> str | None:
     return adapter.statement_for(workload.dialect_map(params))
 
 
+TIMEOUT_MARKER = "timeout: "
+
+
 def _execute(
-    adapter: GraphAdapter, workload: Workload, params: dict[str, Any], index: int
+    adapter: GraphAdapter,
+    workload: Workload,
+    params: dict[str, Any],
+    index: int,
+    deadline: Deadline | None = None,
 ) -> Iteration:
-    """One timed request. Never raises; failures come back as a failed Iteration."""
+    """One timed request. Never raises; failures come back as a failed Iteration.
+
+    The engine is asked to stop working after `timeout_s` where it supports
+    that, and the deadline abandons the call client-side if it does not. Both
+    paths produce the same recorded outcome, because from the report's point of
+    view "the server gave up" and "we stopped waiting" are the same finding:
+    the query did not complete within the bound.
+    """
     statement = _statement_for(adapter, workload, params)
     if statement is None:
         return Iteration(
@@ -347,11 +381,26 @@ def _execute(
             ok=False,
             error="no statement for this dialect and operation",
         )
+
+    timeout_s = deadline.timeout_s if deadline else None
     elapsed: list[int] = []
     try:
         with timed() as elapsed:
-            rows = adapter.run(statement, execution_params(params))
+            if deadline is not None and deadline.enabled:
+                rows = deadline.call(adapter.run, statement, execution_params(params), timeout_s)
+            else:
+                rows = adapter.run(statement, execution_params(params), timeout_s)
         return Iteration(index=index, duration_ns=elapsed[0], rows=rows)
+    except QueryTimeout as exc:
+        # Marked, not merely recorded: the summary must be able to tell a
+        # timeout from a rejected query without parsing prose.
+        return Iteration(
+            index=index,
+            duration_ns=elapsed[0] if elapsed else 0,
+            rows=0,
+            ok=False,
+            error=f"{TIMEOUT_MARKER}{exc}",
+        )
     except (WorkloadFailure, ConnectionFailure) as exc:
         return Iteration(
             index=index,
@@ -371,6 +420,7 @@ def _measure_workload(
     concurrency: int,
     results: BenchmarkResults,
     report: Progress,
+    workload_config: WorkloadConfig,
 ) -> None:
     label = workload.name if concurrency == 1 else f"{workload.name} @c{concurrency}"
     run = WorkloadRun(target=adapter.name, workload=workload.name, concurrency=concurrency)
@@ -391,9 +441,11 @@ def _measure_workload(
         return
 
     if concurrency == 1:
-        _run_sequential(adapter, workload, params, config, run)
+        _run_sequential(adapter, workload, params, config, run, workload_config)
     else:
-        failure = _run_concurrent(target, workload, params, config, concurrency, run)
+        failure = _run_concurrent(
+            target, workload, params, config, concurrency, run, workload_config
+        )
         if failure is not None:
             run.status = "failed"
             run.note = failure
@@ -403,7 +455,13 @@ def _measure_workload(
 
     measured = run.measured_ns()
     failures = run.failure_count()
-    if not measured:
+    if run.status == "timeout":
+        # Already diagnosed by the runner, and more specifically than the
+        # generic branch below could. Overwriting it with "failed" would lose
+        # the distinction between an engine that was rejected and one that was
+        # still working when we stopped waiting.
+        report.say(f"  {label}: TIMEOUT {run.note}")
+    elif not measured:
         run.status = "failed"
         last_error = next(
             (it.error for it in reversed(run.iterations) if it.error), "no iteration completed"
@@ -429,21 +487,38 @@ def _run_sequential(
     params: list[dict[str, Any]],
     config: BenchmarkConfig,
     run: WorkloadRun,
+    workload_config: WorkloadConfig,
 ) -> None:
     warmup = config.run.warmup_iterations
     total = warmup + config.run.measured_iterations
     measured_started: int | None = None
+    timeout_s = _timeout_for(workload_config, config)
 
-    for position in range(total):
-        # Warmup iterations carry a negative index; the summary layer filters
-        # on index >= 0, and the raw file keeps both.
-        index = position - warmup
-        if index == 0:
-            measured_started = time.perf_counter_ns()
-        iteration = _execute(adapter, workload, params[position % len(params)], index)
-        run.iterations.append(iteration)
-        if not iteration.ok and config.run.stop_on_error:
-            break
+    with Deadline(timeout_s) as deadline:
+        for position in range(total):
+            # Warmup iterations carry a negative index; the summary layer
+            # filters on index >= 0, and the raw file keeps both.
+            index = position - warmup
+            if index == 0:
+                measured_started = time.perf_counter_ns()
+            iteration = _execute(adapter, workload, params[position % len(params)], index, deadline)
+            run.iterations.append(iteration)
+
+            if _timed_out(iteration):
+                # Abandon the whole workload on the first timeout. A query that
+                # exceeds the bound once will exceed it again, so the remaining
+                # iterations would cost (iterations x timeout) to learn nothing
+                # new - which is precisely how a smoke run turns into hours.
+                run.status = "timeout"
+                run.note = (
+                    f"did not complete within {timeout_s:.0f}s; abandoned after "
+                    f"{len([i for i in run.iterations if i.index >= 0])} measured "
+                    f"iteration(s). {iteration.error}"
+                )
+                break
+
+            if not iteration.ok and config.run.stop_on_error:
+                break
 
     if measured_started is not None:
         run.wall_ns = time.perf_counter_ns() - measured_started
@@ -456,6 +531,7 @@ def _run_concurrent(
     config: BenchmarkConfig,
     concurrency: int,
     run: WorkloadRun,
+    workload_config: WorkloadConfig,
 ) -> str | None:
     """Measure with `concurrency` independent clients. Returns an error or None.
 
@@ -466,6 +542,7 @@ def _run_concurrent(
     """
     warmup = config.run.warmup_iterations
     measured = config.run.measured_iterations
+    timeout_s = _timeout_for(workload_config, config)
     adapters: list[GraphAdapter] = []
 
     try:
@@ -515,6 +592,14 @@ def _run_concurrent(
         completed = phase(measured, 0, warmup)
         run.wall_ns = time.perf_counter_ns() - started
         run.iterations.extend(completed)
+        timed_out = [it for it in completed if _timed_out(it)]
+        if timed_out:
+            run.status = "timeout"
+            run.note = (
+                f"did not complete within {timeout_s:.0f}s at concurrency "
+                f"{concurrency}; {len(timed_out)} worker(s) abandoned. "
+                f"{timed_out[0].error}"
+            )
     finally:
         for opened in adapters:
             opened.close()

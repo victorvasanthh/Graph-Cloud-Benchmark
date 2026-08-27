@@ -162,8 +162,20 @@ class GraphAdapter(ABC):
     # -- measurement -------------------------------------------------------
 
     @abstractmethod
-    def run(self, statement: str, params: dict[str, Any]) -> int:
-        """Execute one statement, consume every row, return the row count."""
+    def run(self, statement: str, params: dict[str, Any], timeout_s: float | None = None) -> int:
+        """Execute one statement, consume every row, return the row count.
+
+        `timeout_s` asks the *server* to stop working after that long, where
+        the engine offers it as a plain client argument. It is a hint, not a
+        guarantee: engines that do not support it ignore it, and the runner
+        applies its own wall-clock bound on top so the harness is bounded
+        whatever the server does.
+
+        Implementations must not restructure the query or its transaction to
+        obtain a timeout. Wrapping an auto-commit statement in an explicit
+        transaction to get one would add a round trip and change what is being
+        measured, which is a worse outcome than relying on the runner's bound.
+        """
 
     # -- helpers -----------------------------------------------------------
 

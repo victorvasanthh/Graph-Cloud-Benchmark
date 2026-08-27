@@ -61,6 +61,15 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--query-timeout",
+        type=float,
+        help=(
+            "seconds a single query may take before it is abandoned and recorded "
+            "as TIMEOUT (0 disables). Overrides run.query_timeout_s; a workload "
+            "may still set its own timeout_s in workloads.yaml."
+        ),
+    )
+    parser.add_argument(
         "--wait-seconds",
         type=float,
         default=60.0,
@@ -91,6 +100,8 @@ def main() -> int:
         config.run.measured_iterations = args.iterations
     if args.warmup is not None:
         config.run.warmup_iterations = args.warmup
+    if args.query_timeout is not None:
+        config.run.query_timeout_s = args.query_timeout
     try:
         config.run.validate()
     except ConfigurationError as exc:
@@ -110,6 +121,8 @@ def main() -> int:
         f"iterations: {config.run.measured_iterations} measured "
         f"+ {config.run.warmup_iterations} warmup, seed {config.run.seed}"
     )
+    bound = config.run.query_timeout_s
+    print(f"timeout:    {bound:.0f}s per query" if bound > 0 else "timeout:    none (unbounded)")
 
     if not active:
         print(

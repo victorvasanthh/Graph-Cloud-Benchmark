@@ -25,7 +25,7 @@ import time
 from typing import Any
 
 from ..core.config import TargetConfig
-from ..core.errors import ConnectionFailure, WorkloadFailure
+from ..core.errors import ConnectionFailure, QueryTimeout, WorkloadFailure
 from .base import GraphAdapter, IngestPayload, IngestReport
 
 PAPERS = "papers"
@@ -169,10 +169,15 @@ class ArangoDBAdapter(GraphAdapter):
 
     # -- measurement -------------------------------------------------------
 
-    def run(self, statement: str, params: dict[str, Any]) -> int:
+    def run(self, statement: str, params: dict[str, Any], timeout_s: float | None = None) -> int:
         db = self._require_db()
+        # AQL takes max_runtime in seconds and the server enforces it, so the
+        # coordinator stops working rather than being abandoned mid-query.
+        options: dict[str, Any] = {}
+        if timeout_s and timeout_s > 0:
+            options["max_runtime"] = float(timeout_s)
         try:
-            cursor = db.aql.execute(statement, bind_vars=params)
+            cursor = db.aql.execute(statement, bind_vars=params, **options)
             rows = 0
             # The cursor pages lazily over HTTP, so iterating it is what
             # actually fetches the whole result. Reading `cursor.count()`
@@ -181,4 +186,13 @@ class ArangoDBAdapter(GraphAdapter):
                 rows += 1
             return rows
         except Exception as exc:
+            message = str(exc)
+            # ArangoDB reports an exceeded max_runtime as error 1500-family
+            # "query killed"; matching on the text keeps this independent of
+            # the driver's exception hierarchy, which has changed between
+            # major versions.
+            if "killed" in message.lower() or "timeout" in message.lower():
+                raise QueryTimeout(
+                    f"{self.name}: query exceeded max_runtime {timeout_s}s ({message})"
+                ) from exc
             raise WorkloadFailure(f"{self.name}: {type(exc).__name__}: {exc}") from exc

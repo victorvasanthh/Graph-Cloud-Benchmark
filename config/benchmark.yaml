@@ -19,6 +19,19 @@ run:
   # experiment and should not be compared line by line with an old one.
   seed: 20260827
 
+  # Wall-clock bound on a single query. Exceeding it records a clean TIMEOUT
+  # and abandons that workload for that target; it never becomes a latency.
+  #
+  # Enforced two ways. Engines that accept a bound as a plain client argument
+  # (FalkorDB in milliseconds, ArangoDB via max_runtime) are asked to stop
+  # working, which matters when the engine has one capped vCPU. On top of that
+  # the runner applies its own watchdog, so the harness is bounded even when
+  # the server ignores what it was told.
+  #
+  # A workload may override this with `timeout_s` in workloads.yaml, because
+  # the workloads are not comparable in cost: a point lookup taking a second is
+  # broken, while a three-hop neighbourhood scan legitimately takes far longer.
+  # Set to 0 for no bound at all.
   query_timeout_s: 120.0
 
   # Batch size for bulk load. Large enough that per-round-trip overhead is not

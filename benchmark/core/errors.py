@@ -29,6 +29,21 @@ class WorkloadFailure(BenchmarkError):
     """A query was rejected, timed out, or returned an unusable shape."""
 
 
+class QueryTimeout(WorkloadFailure):
+    """The query exceeded its wall-clock bound and was abandoned.
+
+    Distinct from a WorkloadFailure that the engine rejected. A timeout says
+    the engine accepted the query, was still working when the bound expired,
+    and we stopped waiting - so the honest report is "did not complete within
+    N seconds", never "failed" and never a latency measurement.
+
+    Reported separately for a practical reason too: a rejected query is a bug
+    in the harness, while a timeout is usually a property of the engine at the
+    configured resource cap, and conflating them sends people to fix the wrong
+    thing.
+    """
+
+
 class UnsupportedWorkload(WorkloadFailure):
     """This engine has no equivalent for the workload.
 

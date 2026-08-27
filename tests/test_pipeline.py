@@ -16,6 +16,7 @@ logic can be tested without a container.
 from __future__ import annotations
 
 import threading
+import time
 from typing import Any
 
 import pytest
@@ -89,6 +90,12 @@ class MemoryStore:
         self.drop_edges = 0
         #: What schema_is_ready() should report for this target.
         self.index_state: bool | None = True
+        #: workload name -> seconds to block inside run(), simulating an engine
+        #: that does not honour the timeout it was handed.
+        self.hang_on: dict[str, float] = {}
+        #: Every timeout_s the runner passed down, so a test can prove the
+        #: configured bound actually reaches the adapter.
+        self.timeouts_seen: list[float | None] = []
         #: Every parameter dict any connection was asked to execute.
         self.seen_params: list[dict[str, Any]] = []
 
@@ -165,8 +172,16 @@ class MemoryAdapter(GraphAdapter):
     def count_edges(self) -> int:
         return len(self.store.edges)
 
-    def run(self, statement: str, params: dict[str, Any]) -> int:
+    def run(self, statement: str, params: dict[str, Any], timeout_s: float | None = None) -> int:
         workload, op = CYPHER_TO_OP[statement]
+        self.store.timeouts_seen.append(timeout_s)
+        hang = self.store.hang_on.get(workload)
+        if hang is not None:
+            # Simulates an engine that keeps working past its bound. Sleeping
+            # rather than raising is the point: the runner's wall-clock
+            # watchdog is what has to notice, exactly as it must with a real
+            # engine that ignores the timeout it was given.
+            time.sleep(hang)
         store = self.store
         with store.lock:
             store.seen_params.append(dict(params))

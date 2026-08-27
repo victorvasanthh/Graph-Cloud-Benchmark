@@ -188,6 +188,26 @@ single-row hop count. A native procedure is a fair substitute only when it
 answers the identical question, and a test asserts each of those four
 properties rather than trusting the prose.
 
+**Query timeouts.** Every query runs under a wall-clock bound - 120s for the
+full benchmark, 30s for a smoke run. Exceeding it is recorded as `TIMEOUT`,
+kept distinct from `failed`: the engine accepted the query and was still
+working when we stopped waiting, which is a statement about the engine at this
+resource cap rather than about the query being wrong. A timed-out iteration
+contributes no latency to any statistic.
+
+The first timeout abandons that workload for that target. A query that exceeds
+the bound once will exceed it again, so running the remaining iterations would
+cost `iterations x timeout` to learn nothing new - which is exactly how a smoke
+run that should take minutes took hours.
+
+Enforcement is two-layered because engine support is uneven. FalkorDB accepts a
+bound in milliseconds and ArangoDB via `max_runtime`, both plain client
+arguments that leave the query unchanged and let the *server* stop working -
+which matters when it has one capped vCPU. The Bolt driver offers a timeout
+only on an explicit transaction, and wrapping these auto-commit statements in
+one would add a round trip to every measurement, changing what is measured in
+order to bound it; those engines are bounded by the runner's watchdog instead.
+
 **`neighbourhood_3hop` on FalkorDB: a documented failure, not a workaround.**
 FalkorDB times out on the undirected three-hop neighbourhood count under the
 1 vCPU / 2 GB cap. It has an `algo.bfs` procedure that would complete easily,

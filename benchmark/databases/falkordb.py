@@ -21,7 +21,7 @@ import time
 from typing import Any
 
 from ..core.config import TargetConfig
-from ..core.errors import ConnectionFailure, WorkloadFailure
+from ..core.errors import ConnectionFailure, QueryTimeout, WorkloadFailure
 from .base import GraphAdapter, IngestPayload, IngestReport
 
 _NODE_INGEST = """
@@ -191,11 +191,24 @@ class FalkorDBAdapter(GraphAdapter):
 
     # -- measurement -------------------------------------------------------
 
-    def run(self, statement: str, params: dict[str, Any]) -> int:
+    def run(self, statement: str, params: dict[str, Any], timeout_s: float | None = None) -> int:
         graph = self._require_graph()
+        # This client takes the bound in MILLISECONDS and the server aborts the
+        # query itself, which is much better than abandoning it client-side: the
+        # engine stops burning its one capped vCPU instead of continuing to work
+        # on a result nobody will read.
+        timeout_ms = int(timeout_s * 1000) if timeout_s and timeout_s > 0 else None
         try:
-            result = graph.query(statement, params)
+            if timeout_ms is None:
+                result = graph.query(statement, params)
+            else:
+                result = graph.query(statement, params, timeout=timeout_ms)
         except Exception as exc:
+            message = str(exc)
+            if "timed out" in message.lower() or "timeout" in message.lower():
+                raise QueryTimeout(
+                    f"{self.name}: query timed out after {timeout_s:.0f}s ({message})"
+                ) from exc
             raise WorkloadFailure(f"{self.name}: {type(exc).__name__}: {exc}") from exc
         # This client materialises the whole result set before returning, so
         # the rows are already paid for by the time the timer stops. Nothing

@@ -41,6 +41,7 @@ STATUS_TEXT = {
     "unavailable": "not reachable",
     "unsupported": "n/a",
     "failed": "failed",
+    "timeout": "timed out",
 }
 
 
