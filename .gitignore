@@ -15,6 +15,16 @@ data/*
 results/raw/*.tmp
 results/**/*.partial
 
+# Smoke runs are 1-iteration feasibility probes, not measurements. They prove
+# the plumbing works and nothing else. They are deliberately NOT committed: a
+# file under results/raw is the record of a real run, and a smoke artifact
+# sitting beside one is an invitation to read it as data. The `smoke-` prefix
+# comes from run_suite.sh, which stamps it onto every artifact of a --smoke run.
+results/raw/smoke-*
+results/summary/smoke-*
+charts/*smoke-*
+docs/report-smoke-*
+
 # ---- python ----
 __pycache__/
 *.py[cod]

@@ -33,6 +33,7 @@ sys.path.insert(0, str(REPO_ROOT))
 import yaml  # noqa: E402
 
 from benchmark.core.config import TargetConfig  # noqa: E402
+from benchmark.core.worktree import ADVICE, blocking, group, read_status  # noqa: E402
 from benchmark.databases.arangodb import ArangoDBAdapter  # noqa: E402
 from benchmark.databases.bolt import BoltAdapter  # noqa: E402
 from benchmark.databases.falkordb import FalkorDBAdapter  # noqa: E402
@@ -78,14 +79,28 @@ def report_commit() -> list[str]:
     print(f"  branch:  {branch or 'unknown'}")
     print(f"  commit:  {head or 'unknown'}  {subject}")
 
-    dirty = _git("status", "--porcelain")
-    if dirty:
-        count = len(dirty.splitlines())
-        print(f"  working tree: {count} uncommitted change(s)")
-        findings.append(
-            f"{count} uncommitted change(s): what runs here is not what a fresh "
-            f"clone or another machine would run"
-        )
+    entries = read_status(REPO_ROOT)
+    if entries:
+        print(f"  working tree: {len(entries)} uncommitted change(s)")
+        # A bare count invites the reaction that loses work: delete everything.
+        # Say what each one is instead.
+        for category, items in sorted(group(entries).items()):
+            print()
+            print(f"    {category}: {len(items)} - {ADVICE[category]}")
+            for entry in items[:12]:
+                print(f"      {entry.status} {entry.path}")
+            if len(items) > 12:
+                print(f"      ... and {len(items) - 12} more")
+
+        blockers = blocking(entries)
+        if blockers:
+            findings.append(
+                f"{len(blockers)} change(s) need a decision before a benchmark is "
+                f"reproducible; see the breakdown above"
+            )
+        else:
+            print()
+            print("    none of these block a run")
     else:
         print("  working tree: clean")
 
