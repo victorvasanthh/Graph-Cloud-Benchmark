@@ -67,6 +67,12 @@ down:  ## Stop every container, keeping volumes
 logs:  ## Tail logs for SERVICE
 	$(COMPOSE) logs -f --tail=100 $(SERVICE)
 
+smoke-managed:  ## Smoke ONLY CognoDB and Aura (no containers started)
+	bash scripts/run_suite.sh --smoke --managed-only
+
+smoke-local:  ## Smoke ONLY the four containers (no cloud calls)
+	bash scripts/run_suite.sh --smoke --self-hosted-only
+
 smoke:  ## Feasibility check: 1 iteration per workload, every target
 	bash scripts/run_suite.sh --smoke
 

@@ -27,11 +27,17 @@ COMPOSE=(docker compose -f infra/docker-compose.yml --env-file .env)
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 RAW_DIR="results/raw"
 SMOKE=0
+MANAGED_ONLY=0
+SELF_HOSTED_ONLY=0
 EXTRA_ARGS=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --smoke) SMOKE=1; shift ;;
+    # Bringing up four containers to reach two cloud instances wastes ten
+    # minutes and proves nothing about either of them.
+    --managed-only) MANAGED_ONLY=1; shift ;;
+    --self-hosted-only) SELF_HOSTED_ONLY=1; shift ;;
     --) shift; EXTRA_ARGS+=("$@"); break ;;
     *) EXTRA_ARGS+=("$1"); shift ;;
   esac
@@ -104,6 +110,11 @@ teardown() {
   fi
 }
 
+if [[ $MANAGED_ONLY -eq 1 ]]; then
+  SELF_HOSTED=()
+  echo "managed-only: skipping every container"
+fi
+
 for pair in "${SELF_HOSTED[@]}"; do
   service="${pair%%:*}"
   target="${pair##*:}"
@@ -142,6 +153,10 @@ done
 # separate services on separate hardware, so they do not contend with
 # each other the way two local containers would.
 configured_managed=()
+if [[ $SELF_HOSTED_ONLY -eq 1 ]]; then
+  MANAGED=()
+  echo "self-hosted-only: skipping the managed targets"
+fi
 for target in "${MANAGED[@]}"; do
   if python scripts/run_benchmark.py --target "$target" --dry-run >/dev/null 2>&1; then
     configured_managed+=(--target "$target")

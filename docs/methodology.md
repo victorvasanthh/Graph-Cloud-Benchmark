@@ -99,6 +99,38 @@ Four honest caveats:
    Without that anchor, a slow managed result and a slow engine are
    indistinguishable.
 
+### Managed free tiers
+
+Two targets are rented rather than owned, and that changes what a result means.
+
+**The round trip is in every number.** A container answers over loopback; a
+managed instance answers over the internet. That difference is often larger
+than any difference between the engines, which is exactly why Neo4j AuraDB Free
+is included. Aura and the self-hosted Neo4j target run the *same engine*, so
+the gap between them is the managed-platform overhead. Read that gap first;
+every other managed-versus-container comparison should be interpreted through
+it. Without the anchor, a slow platform and a slow database are
+indistinguishable.
+
+**Client concurrency is capped at the iteration count.** More clients than
+requests is not a deeper concurrency test - the surplus workers get nothing to
+do, and each still opens a connection. A smoke run of one iteration would
+otherwise open forty connections to a free tier to issue a single query:
+enough to look like abuse, enough to be throttled for it, and measuring nothing
+the single-client run did not.
+
+**Free-tier ceilings are the vendor's, not ours.** Aura Free imposes limits on
+graph size and pauses an idle instance; a connection limit below 40 will make
+the highest concurrency level fail. Those failures are reported as failures -
+`could not open N connections` - and never as slow results. If a tier cannot
+sustain a level, that is a finding about the tier.
+
+**CognoDB's dialect is an assumption until it is verified.** The configuration
+treats it as Neo4j-compatible Cypher over Bolt 5.x, expressed as a `flavour`
+setting so a difference can be corrected in YAML rather than in the adapter. If
+its DDL or bulk-delete syntax turns out to differ more than that, the
+comparison needs revisiting before anything is published.
+
 ## 5. Query equivalence
 
 The query text for every workload lives in one file,

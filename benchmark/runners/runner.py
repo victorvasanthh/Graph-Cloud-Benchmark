@@ -127,8 +127,18 @@ def run_benchmark(
     return results
 
 
-def _levels_for(workload_config: WorkloadConfig) -> list[int]:
-    """Client-concurrency levels this workload should be measured at."""
+def _levels_for(
+    workload_config: WorkloadConfig, config: BenchmarkConfig | None = None
+) -> list[int]:
+    """Client-concurrency levels this workload should be measured at.
+
+    Capped at the number of measured iterations. More clients than requests is
+    not a deeper concurrency test: the surplus workers get nothing to do, and
+    each still opens a connection. That matters on a managed free tier, where a
+    smoke run of one iteration would otherwise open forty connections to issue
+    a single query - enough to look like abuse, and enough to be throttled for
+    it, while measuring nothing the level-1 run did not already measure.
+    """
     raw = workload_config.params.get("concurrency", [1])
     levels = [int(level) for level in (raw if isinstance(raw, list) else [raw])]
     invalid = [level for level in levels if level < 1]
@@ -137,6 +147,9 @@ def _levels_for(workload_config: WorkloadConfig) -> list[int]:
             f"workload {workload_config.name!r} requests concurrency {invalid}; "
             f"levels must be 1 or greater"
         )
+    if config is not None:
+        ceiling = max(1, config.run.measured_iterations)
+        levels = [min(level, ceiling) for level in levels]
     return sorted(set(levels))
 
 
@@ -145,6 +158,7 @@ def _record_unavailable(
     target: TargetConfig,
     workloads: list[tuple[Workload, WorkloadConfig]],
     reason: str,
+    config: BenchmarkConfig | None = None,
 ) -> None:
     """Write an explicit row per workload for a target that never connected.
 
@@ -158,7 +172,7 @@ def _record_unavailable(
         WorkloadRun(target=target.name, workload=INGEST_WORKLOAD, status="unavailable", note=reason)
     )
     for workload, workload_config in workloads:
-        for level in _levels_for(workload_config):
+        for level in _levels_for(workload_config, config):
             results.add(
                 WorkloadRun(
                     target=target.name,
@@ -205,7 +219,7 @@ def _measure_target(
         adapter.connect()
     except ConnectionFailure as exc:
         report.say(f"  unavailable: {exc}")
-        _record_unavailable(results, target, workloads, str(exc))
+        _record_unavailable(results, target, workloads, str(exc), config)
         return
 
     try:
@@ -220,7 +234,7 @@ def _measure_target(
             _verify_counts(adapter, payload, results, target, report)
 
         for workload, workload_config in workloads:
-            for level in _levels_for(workload_config):
+            for level in _levels_for(workload_config, config):
                 _measure_workload(
                     target=target,
                     adapter=adapter,
