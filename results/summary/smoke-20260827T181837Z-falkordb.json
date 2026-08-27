@@ -1,0 +1,769 @@
+{
+  "baseline": "falkordb",
+  "consistency_issues": [],
+  "consistency_verdict": "only one target produced results, so no cross-engine check was possible",
+  "manifest": {
+    "dataset": "cit-HepTh",
+    "dataset_edges": 352768,
+    "dataset_nodes": 27770,
+    "finished_at": "2026-08-27T18:22:59+00:00",
+    "measured_iterations": 1,
+    "notes": [
+      "cognodb-cloud skipped (not configured: COGNODB_URI, COGNODB_PASSWORD unset)",
+      "aura-free skipped (not configured: AURA_URI, AURA_PASSWORD unset)",
+      "neo4j-selfhosted skipped (disabled in configuration)",
+      "memgraph skipped (disabled in configuration)",
+      "arangodb skipped (disabled in configuration)",
+      "falkordb server version: FalkorDB module graph v42004"
+    ],
+    "platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.36",
+    "processor": "x86_64",
+    "python_version": "3.12.11",
+    "run_id": "smoke-20260827T181837Z-falkordb",
+    "schema_version": 1,
+    "seed": 20260827,
+    "started_at": "2026-08-27T18:22:05+00:00",
+    "warmup_iterations": 0
+  },
+  "workloads": {
+    "date_filtered_top": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 18.401032,
+              "mean_ms": 18.401032,
+              "min_ms": 18.401032,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 18.401032,
+              "p90_ms": 18.401032,
+              "p95_ms": 18.401032,
+              "p99_ms": 18.401032,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 54.29094746769919,
+              "wall_s": 0.018419277
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Most-cited papers published within a given year.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Filter on an ISO date string, then count incoming citations. Only about 41% of nodes carry a publication date in the source data, so this workload deliberately touches a minority of the graph; the absolute row counts are small by construction, not by accident.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "falkordb": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 18.401032,
+          "mean_ms": 18.401032,
+          "min_ms": 18.401032,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 18.401032,
+          "p90_ms": 18.401032,
+          "p95_ms": 18.401032,
+          "p99_ms": 18.401032,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 54.29094746769919,
+          "wall_s": 0.018419277
+        }
+      }
+    },
+    "ingest": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "batches": 77,
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "edges_expected": 352768,
+              "edges_loaded": 352768,
+              "edges_per_second": 7029.686125360812,
+              "failures": 0,
+              "index_verified": true,
+              "max_ms": 50182.610391,
+              "mean_ms": 50182.610391,
+              "min_ms": 50182.610391,
+              "n": 1,
+              "nodes_expected": 27770,
+              "nodes_loaded": 27770,
+              "nodes_per_second": 553.3789450893214,
+              "p50_ms": 50182.610391,
+              "p90_ms": 50182.610391,
+              "p95_ms": 50182.610391,
+              "p99_ms": 50182.610391,
+              "relative_p50": 1.0,
+              "rows_returned": 352768,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 0.01992722164527625,
+              "wall_s": 50.182610391
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "",
+      "equivalence": "n/a",
+      "equivalence_note": "",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "falkordb": {
+          "batches": 77,
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "edges_expected": 352768,
+          "edges_loaded": 352768,
+          "edges_per_second": 7029.686125360812,
+          "failures": 0,
+          "index_verified": true,
+          "max_ms": 50182.610391,
+          "mean_ms": 50182.610391,
+          "min_ms": 50182.610391,
+          "n": 1,
+          "nodes_expected": 27770,
+          "nodes_loaded": 27770,
+          "nodes_per_second": 553.3789450893214,
+          "p50_ms": 50182.610391,
+          "p90_ms": 50182.610391,
+          "p95_ms": 50182.610391,
+          "p99_ms": 50182.610391,
+          "relative_p50": 1.0,
+          "rows_returned": 352768,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 0.01992722164527625,
+          "wall_s": 50.182610391
+        }
+      }
+    },
+    "mixed_read_write": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 0.746372,
+              "mean_ms": 0.746372,
+              "min_ms": 0.746372,
+              "mutates": true,
+              "n": 1,
+              "p50_ms": 0.746372,
+              "p90_ms": 0.746372,
+              "p95_ms": 0.746372,
+              "p99_ms": 0.746372,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 1311.0232142880554,
+              "wall_s": 0.000762763
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 1.040541,
+              "mean_ms": 1.040541,
+              "min_ms": 1.040541,
+              "mutates": true,
+              "n": 1,
+              "p50_ms": 1.040541,
+              "p90_ms": 1.040541,
+              "p95_ms": 1.040541,
+              "p99_ms": 1.040541,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 475.6575132720338,
+              "wall_s": 0.002102353
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 0.842712,
+              "mean_ms": 0.842712,
+              "min_ms": 0.842712,
+              "mutates": true,
+              "n": 1,
+              "p50_ms": 0.842712,
+              "p90_ms": 0.842712,
+              "p95_ms": 0.842712,
+              "p99_ms": 0.842712,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 208.23359811623556,
+              "wall_s": 0.004802299
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Read-heavy mix: one-hop expansion with interleaved counter updates.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "The read is the one_hop expansion; the write increments a counter property on a single paper. The write deliberately touches only a property and never the graph structure, so it cannot change what any other workload measures. Read and write positions in the sequence are fixed by the seed and identical on every engine.",
+      "mutates": true,
+      "row_counts_agree": true,
+      "targets": {
+        "falkordb": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 0.746372,
+          "mean_ms": 0.746372,
+          "min_ms": 0.746372,
+          "mutates": true,
+          "n": 1,
+          "p50_ms": 0.746372,
+          "p90_ms": 0.746372,
+          "p95_ms": 0.746372,
+          "p99_ms": 0.746372,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 1311.0232142880554,
+          "wall_s": 0.000762763
+        }
+      }
+    },
+    "neighbourhood_3hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "concurrency": 1,
+              "note": "every measured iteration failed; last error: falkordb: ResponseError: Query timed out",
+              "status": "failed"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Size of the undirected three-hop neighbourhood of a paper.",
+      "equivalence": "loose",
+      "equivalence_note": "The two engines are asked for the same number and allowed to reach it differently. Cypher enumerates paths and deduplicates with count(DISTINCT ...); AQL uses uniqueVertices:'global', which prunes during the walk. That is a genuine difference in work done, so this row compares engine-plus-optimiser rather than raw traversal speed, and it is the one workload here whose ratio should not be quoted on its own.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "falkordb": {
+          "concurrency": 1,
+          "note": "every measured iteration failed; last error: falkordb: ResponseError: Query timed out",
+          "status": "failed"
+        }
+      }
+    },
+    "one_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 56.62546,
+              "mean_ms": 56.62546,
+              "min_ms": 56.62546,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 56.62546,
+              "p90_ms": 56.62546,
+              "p95_ms": 56.62546,
+              "p99_ms": 56.62546,
+              "relative_p50": 1.0,
+              "rows_returned": 562,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 17.654178442150805,
+              "wall_s": 0.056643814
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 3.228261,
+              "mean_ms": 3.228261,
+              "min_ms": 3.228261,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 3.228261,
+              "p90_ms": 3.228261,
+              "p95_ms": 3.228261,
+              "p99_ms": 3.228261,
+              "relative_p50": 1.0,
+              "rows_returned": 562,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 228.1968206706157,
+              "wall_s": 0.004382182
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 51.173159,
+              "mean_ms": 51.173159,
+              "min_ms": 51.173159,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 51.173159,
+              "p90_ms": 51.173159,
+              "p95_ms": 51.173159,
+              "p99_ms": 51.173159,
+              "relative_p50": 1.0,
+              "rows_returned": 562,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 18.148892131732936,
+              "wall_s": 0.055099782
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Papers directly cited by a given paper.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A single OUTBOUND edge step in both dialects.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "falkordb": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 56.62546,
+          "mean_ms": 56.62546,
+          "min_ms": 56.62546,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 56.62546,
+          "p90_ms": 56.62546,
+          "p95_ms": 56.62546,
+          "p99_ms": 56.62546,
+          "relative_p50": 1.0,
+          "rows_returned": 562,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 17.654178442150805,
+          "wall_s": 0.056643814
+        }
+      }
+    },
+    "point_lookup": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 0.779574,
+              "mean_ms": 0.779574,
+              "min_ms": 0.779574,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 0.779574,
+              "p90_ms": 0.779574,
+              "p95_ms": 0.779574,
+              "p99_ms": 0.779574,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 1248.8869295240618,
+              "wall_s": 0.000800713
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 0.946525,
+              "mean_ms": 0.946525,
+              "min_ms": 0.946525,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 0.946525,
+              "p90_ms": 0.946525,
+              "p95_ms": 0.946525,
+              "p99_ms": 0.946525,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 521.6250079547814,
+              "wall_s": 0.001917086
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 0.759526,
+              "mean_ms": 0.759526,
+              "min_ms": 0.759526,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 0.759526,
+              "p90_ms": 0.759526,
+              "p95_ms": 0.759526,
+              "p99_ms": 0.759526,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 198.10826418529462,
+              "wall_s": 0.005047745
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Fetch a single paper by id.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher resolves the unique constraint on :Paper(id); AQL resolves the primary index via DOCUMENT(). Both are the engine's fastest single-key access path, which is the property being held equal.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "falkordb": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 0.779574,
+          "mean_ms": 0.779574,
+          "min_ms": 0.779574,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 0.779574,
+          "p90_ms": 0.779574,
+          "p95_ms": 0.779574,
+          "p99_ms": 0.779574,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 1248.8869295240618,
+          "wall_s": 0.000800713
+        }
+      }
+    },
+    "shortest_path": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "concurrency": 1,
+              "note": "every measured iteration failed; last error: falkordb: ResponseError: FalkorDB currently only supports shortestPaths in WITH or RETURN clauses",
+              "status": "failed"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Hop count of the shortest undirected path between two papers.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Both sides run the engine's built-in shortest-path operator and return a single row holding the hop count. Pairs are pre-validated as reachable, so no engine is credited for failing fast on a disconnected pair.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "falkordb": {
+          "concurrency": 1,
+          "note": "every measured iteration failed; last error: falkordb: ResponseError: FalkorDB currently only supports shortestPaths in WITH or RETURN clauses",
+          "status": "failed"
+        }
+      }
+    },
+    "top_cited": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 155.402242,
+              "mean_ms": 155.402242,
+              "min_ms": 155.402242,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 155.402242,
+              "p90_ms": 155.402242,
+              "p95_ms": 155.402242,
+              "p99_ms": 155.402242,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 6.434089390952894,
+              "wall_s": 0.155422149
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "The most-cited papers in the corpus, by in-degree.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A full scan and grouping of every edge in both dialects. This is the workload least sensitive to modelling choices and the most sensitive to how much memory the tier allows.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "falkordb": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 155.402242,
+          "mean_ms": 155.402242,
+          "min_ms": 155.402242,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 155.402242,
+          "p90_ms": 155.402242,
+          "p95_ms": 155.402242,
+          "p99_ms": 155.402242,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 6.434089390952894,
+          "wall_s": 0.155422149
+        }
+      }
+    },
+    "two_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "falkordb": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 17.415364,
+              "mean_ms": 17.415364,
+              "min_ms": 17.415364,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 17.415364,
+              "p90_ms": 17.415364,
+              "p95_ms": 17.415364,
+              "p99_ms": 17.415364,
+              "relative_p50": 1.0,
+              "rows_returned": 2334,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 57.36637621305505,
+              "wall_s": 0.017431814
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Distinct papers exactly two citation hops downstream.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher variable-length patterns are relationship-isomorphic, so no edge repeats within a path. The AQL traversal is pinned to uniqueEdges:'path' to match that exactly rather than relying on the default, which has changed between ArangoDB versions.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "falkordb": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 17.415364,
+          "mean_ms": 17.415364,
+          "min_ms": 17.415364,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 17.415364,
+          "p90_ms": 17.415364,
+          "p95_ms": 17.415364,
+          "p99_ms": 17.415364,
+          "relative_p50": 1.0,
+          "rows_returned": 2334,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 57.36637621305505,
+          "wall_s": 0.017431814
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,807 @@
+{
+  "baseline": "memgraph",
+  "consistency_issues": [],
+  "consistency_verdict": "only one target produced results, so no cross-engine check was possible",
+  "manifest": {
+    "dataset": "cit-HepTh",
+    "dataset_edges": 352768,
+    "dataset_nodes": 27770,
+    "finished_at": "2026-08-27T18:13:09+00:00",
+    "measured_iterations": 1,
+    "notes": [
+      "cognodb-cloud skipped (not configured: COGNODB_URI, COGNODB_PASSWORD unset)",
+      "aura-free skipped (not configured: AURA_URI, AURA_PASSWORD unset)",
+      "neo4j-selfhosted skipped (disabled in configuration)",
+      "falkordb skipped (disabled in configuration)",
+      "arangodb skipped (disabled in configuration)",
+      "memgraph server version: 2.22.0"
+    ],
+    "platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.36",
+    "processor": "x86_64",
+    "python_version": "3.12.11",
+    "run_id": "smoke-20260827T181052Z-memgraph",
+    "schema_version": 1,
+    "seed": 20260827,
+    "started_at": "2026-08-27T18:12:52+00:00",
+    "warmup_iterations": 0
+  },
+  "workloads": {
+    "date_filtered_top": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 17.574303,
+              "mean_ms": 17.574303,
+              "min_ms": 17.574303,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 17.574303,
+              "p90_ms": 17.574303,
+              "p95_ms": 17.574303,
+              "p99_ms": 17.574303,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 56.703724062440784,
+              "wall_s": 0.017635526
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Most-cited papers published within a given year.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Filter on an ISO date string, then count incoming citations. Only about 41% of nodes carry a publication date in the source data, so this workload deliberately touches a minority of the graph; the absolute row counts are small by construction, not by accident.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 17.574303,
+          "mean_ms": 17.574303,
+          "min_ms": 17.574303,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 17.574303,
+          "p90_ms": 17.574303,
+          "p95_ms": 17.574303,
+          "p99_ms": 17.574303,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 56.703724062440784,
+          "wall_s": 0.017635526
+        }
+      }
+    },
+    "ingest": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "batches": 77,
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "edges_expected": 352768,
+              "edges_loaded": 352768,
+              "edges_per_second": 49213.552625965174,
+              "failures": 0,
+              "max_ms": 7168.106775,
+              "mean_ms": 7168.106775,
+              "min_ms": 7168.106775,
+              "n": 1,
+              "nodes_expected": 27770,
+              "nodes_loaded": 27770,
+              "nodes_per_second": 3874.1052375018508,
+              "p50_ms": 7168.106775,
+              "p90_ms": 7168.106775,
+              "p95_ms": 7168.106775,
+              "p99_ms": 7168.106775,
+              "relative_p50": 1.0,
+              "rows_returned": 352768,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 0.13950685046819772,
+              "wall_s": 7.168106775
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "",
+      "equivalence": "n/a",
+      "equivalence_note": "",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "batches": 77,
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "edges_expected": 352768,
+          "edges_loaded": 352768,
+          "edges_per_second": 49213.552625965174,
+          "failures": 0,
+          "max_ms": 7168.106775,
+          "mean_ms": 7168.106775,
+          "min_ms": 7168.106775,
+          "n": 1,
+          "nodes_expected": 27770,
+          "nodes_loaded": 27770,
+          "nodes_per_second": 3874.1052375018508,
+          "p50_ms": 7168.106775,
+          "p90_ms": 7168.106775,
+          "p95_ms": 7168.106775,
+          "p99_ms": 7168.106775,
+          "relative_p50": 1.0,
+          "rows_returned": 352768,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 0.13950685046819772,
+          "wall_s": 7.168106775
+        }
+      }
+    },
+    "mixed_read_write": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 0.938029,
+              "mean_ms": 0.938029,
+              "min_ms": 0.938029,
+              "mutates": true,
+              "n": 1,
+              "p50_ms": 0.938029,
+              "p90_ms": 0.938029,
+              "p95_ms": 0.938029,
+              "p99_ms": 0.938029,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 1047.053538988609,
+              "wall_s": 0.000955061
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 1.273043,
+              "mean_ms": 1.273043,
+              "min_ms": 1.273043,
+              "mutates": true,
+              "n": 1,
+              "p50_ms": 1.273043,
+              "p90_ms": 1.273043,
+              "p95_ms": 1.273043,
+              "p99_ms": 1.273043,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 455.3553661580802,
+              "wall_s": 0.002196087
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 1.245282,
+              "mean_ms": 1.245282,
+              "min_ms": 1.245282,
+              "mutates": true,
+              "n": 1,
+              "p50_ms": 1.245282,
+              "p90_ms": 1.245282,
+              "p95_ms": 1.245282,
+              "p99_ms": 1.245282,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 186.0751758596487,
+              "wall_s": 0.005374172
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Read-heavy mix: one-hop expansion with interleaved counter updates.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "The read is the one_hop expansion; the write increments a counter property on a single paper. The write deliberately touches only a property and never the graph structure, so it cannot change what any other workload measures. Read and write positions in the sequence are fixed by the seed and identical on every engine.",
+      "mutates": true,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 0.938029,
+          "mean_ms": 0.938029,
+          "min_ms": 0.938029,
+          "mutates": true,
+          "n": 1,
+          "p50_ms": 0.938029,
+          "p90_ms": 0.938029,
+          "p95_ms": 0.938029,
+          "p99_ms": 0.938029,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 1047.053538988609,
+          "wall_s": 0.000955061
+        }
+      }
+    },
+    "neighbourhood_3hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "loose",
+              "failures": 0,
+              "max_ms": 3582.177488,
+              "mean_ms": 3582.177488,
+              "min_ms": 3582.177488,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 3582.177488,
+              "p90_ms": 3582.177488,
+              "p95_ms": 3582.177488,
+              "p99_ms": 3582.177488,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 0.279158079554771,
+              "wall_s": 3.58219974
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Size of the undirected three-hop neighbourhood of a paper.",
+      "equivalence": "loose",
+      "equivalence_note": "The two engines are asked for the same number and allowed to reach it differently. Cypher enumerates paths and deduplicates with count(DISTINCT ...); AQL uses uniqueVertices:'global', which prunes during the walk. That is a genuine difference in work done, so this row compares engine-plus-optimiser rather than raw traversal speed, and it is the one workload here whose ratio should not be quoted on its own.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "loose",
+          "failures": 0,
+          "max_ms": 3582.177488,
+          "mean_ms": 3582.177488,
+          "min_ms": 3582.177488,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 3582.177488,
+          "p90_ms": 3582.177488,
+          "p95_ms": 3582.177488,
+          "p99_ms": 3582.177488,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 0.279158079554771,
+          "wall_s": 3.58219974
+        }
+      }
+    },
+    "one_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 15.962322,
+              "mean_ms": 15.962322,
+              "min_ms": 15.962322,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 15.962322,
+              "p90_ms": 15.962322,
+              "p95_ms": 15.962322,
+              "p99_ms": 15.962322,
+              "relative_p50": 1.0,
+              "rows_returned": 562,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 62.55247761919266,
+              "wall_s": 0.015986577
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 32.428939,
+              "mean_ms": 32.428939,
+              "min_ms": 32.428939,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 32.428939,
+              "p90_ms": 32.428939,
+              "p95_ms": 32.428939,
+              "p99_ms": 32.428939,
+              "relative_p50": 1.0,
+              "rows_returned": 562,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 29.627850202893,
+              "wall_s": 0.033752027
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 18.34707,
+              "mean_ms": 18.34707,
+              "min_ms": 18.34707,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 18.34707,
+              "p90_ms": 18.34707,
+              "p95_ms": 18.34707,
+              "p99_ms": 18.34707,
+              "relative_p50": 1.0,
+              "rows_returned": 562,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 49.540899529965856,
+              "wall_s": 0.020185342
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Papers directly cited by a given paper.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A single OUTBOUND edge step in both dialects.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 15.962322,
+          "mean_ms": 15.962322,
+          "min_ms": 15.962322,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 15.962322,
+          "p90_ms": 15.962322,
+          "p95_ms": 15.962322,
+          "p99_ms": 15.962322,
+          "relative_p50": 1.0,
+          "rows_returned": 562,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 62.55247761919266,
+          "wall_s": 0.015986577
+        }
+      }
+    },
+    "point_lookup": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 1.66169,
+              "mean_ms": 1.66169,
+              "min_ms": 1.66169,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 1.66169,
+              "p90_ms": 1.66169,
+              "p95_ms": 1.66169,
+              "p99_ms": 1.66169,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 593.4355348011368,
+              "wall_s": 0.001685103
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 1.583746,
+              "mean_ms": 1.583746,
+              "min_ms": 1.583746,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 1.583746,
+              "p90_ms": 1.583746,
+              "p95_ms": 1.583746,
+              "p99_ms": 1.583746,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 415.5037754750558,
+              "wall_s": 0.002406717
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 1.375055,
+              "mean_ms": 1.375055,
+              "min_ms": 1.375055,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 1.375055,
+              "p90_ms": 1.375055,
+              "p95_ms": 1.375055,
+              "p99_ms": 1.375055,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 181.71361389309607,
+              "wall_s": 0.005503165
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Fetch a single paper by id.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher resolves the unique constraint on :Paper(id); AQL resolves the primary index via DOCUMENT(). Both are the engine's fastest single-key access path, which is the property being held equal.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 1.66169,
+          "mean_ms": 1.66169,
+          "min_ms": 1.66169,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 1.66169,
+          "p90_ms": 1.66169,
+          "p95_ms": 1.66169,
+          "p99_ms": 1.66169,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 593.4355348011368,
+          "wall_s": 0.001685103
+        }
+      }
+    },
+    "shortest_path": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "concurrency": 1,
+              "note": "every measured iteration failed; last error: memgraph: ClientError: {code: Memgraph.ClientError.MemgraphError.MemgraphError} {message: line 1:69 extraneous input 'shortestPath' expecting '('}",
+              "status": "failed"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Hop count of the shortest undirected path between two papers.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Both sides run the engine's built-in shortest-path operator and return a single row holding the hop count. Pairs are pre-validated as reachable, so no engine is credited for failing fast on a disconnected pair.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "concurrency": 1,
+          "note": "every measured iteration failed; last error: memgraph: ClientError: {code: Memgraph.ClientError.MemgraphError.MemgraphError} {message: line 1:69 extraneous input 'shortestPath' expecting '('}",
+          "status": "failed"
+        }
+      }
+    },
+    "top_cited": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 143.540336,
+              "mean_ms": 143.540336,
+              "min_ms": 143.540336,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 143.540336,
+              "p90_ms": 143.540336,
+              "p95_ms": 143.540336,
+              "p99_ms": 143.540336,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 6.965922997266141,
+              "wall_s": 0.143555994
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "The most-cited papers in the corpus, by in-degree.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A full scan and grouping of every edge in both dialects. This is the workload least sensitive to modelling choices and the most sensitive to how much memory the tier allows.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 143.540336,
+          "mean_ms": 143.540336,
+          "min_ms": 143.540336,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 143.540336,
+          "p90_ms": 143.540336,
+          "p95_ms": 143.540336,
+          "p99_ms": 143.540336,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 6.965922997266141,
+          "wall_s": 0.143555994
+        }
+      }
+    },
+    "two_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 75.150582,
+              "mean_ms": 75.150582,
+              "min_ms": 75.150582,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 75.150582,
+              "p90_ms": 75.150582,
+              "p95_ms": 75.150582,
+              "p99_ms": 75.150582,
+              "relative_p50": 1.0,
+              "rows_returned": 2334,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 13.30300779675984,
+              "wall_s": 0.07517097
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Distinct papers exactly two citation hops downstream.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher variable-length patterns are relationship-isomorphic, so no edge repeats within a path. The AQL traversal is pinned to uniqueEdges:'path' to match that exactly rather than relying on the default, which has changed between ArangoDB versions.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 75.150582,
+          "mean_ms": 75.150582,
+          "min_ms": 75.150582,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 75.150582,
+          "p90_ms": 75.150582,
+          "p95_ms": 75.150582,
+          "p99_ms": 75.150582,
+          "relative_p50": 1.0,
+          "rows_returned": 2334,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 13.30300779675984,
+          "wall_s": 0.07517097
+        }
+      }
+    }
+  }
+}

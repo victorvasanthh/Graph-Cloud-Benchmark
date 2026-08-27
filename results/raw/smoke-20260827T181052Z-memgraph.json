@@ -1,0 +1,347 @@
+{
+  "manifest": {
+    "dataset": "cit-HepTh",
+    "dataset_edges": 352768,
+    "dataset_nodes": 27770,
+    "finished_at": "2026-08-27T18:13:09+00:00",
+    "measured_iterations": 1,
+    "notes": [
+      "cognodb-cloud skipped (not configured: COGNODB_URI, COGNODB_PASSWORD unset)",
+      "aura-free skipped (not configured: AURA_URI, AURA_PASSWORD unset)",
+      "neo4j-selfhosted skipped (disabled in configuration)",
+      "falkordb skipped (disabled in configuration)",
+      "arangodb skipped (disabled in configuration)",
+      "memgraph server version: 2.22.0"
+    ],
+    "platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.36",
+    "processor": "x86_64",
+    "python_version": "3.12.11",
+    "run_id": "smoke-20260827T181052Z-memgraph",
+    "schema_version": 1,
+    "seed": 20260827,
+    "started_at": "2026-08-27T18:12:52+00:00",
+    "warmup_iterations": 0
+  },
+  "runs": [
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 7168106775,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 352768
+        }
+      ],
+      "note": null,
+      "scale": {
+        "batches": 77,
+        "edges_expected": 352768,
+        "edges_loaded": 352768,
+        "edges_per_second": 49213.552625965174,
+        "nodes_expected": 27770,
+        "nodes_loaded": 27770,
+        "nodes_per_second": 3874.1052375018508
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 7168106775,
+      "workload": "ingest"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 1661690,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 1685103,
+      "workload": "point_lookup"
+    },
+    {
+      "concurrency": 10,
+      "iterations": [
+        {
+          "duration_ns": 1583746,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 2406717,
+      "workload": "point_lookup"
+    },
+    {
+      "concurrency": 40,
+      "iterations": [
+        {
+          "duration_ns": 1375055,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 5503165,
+      "workload": "point_lookup"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 15962322,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 562
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 15986577,
+      "workload": "one_hop"
+    },
+    {
+      "concurrency": 10,
+      "iterations": [
+        {
+          "duration_ns": 32428939,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 562
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 33752027,
+      "workload": "one_hop"
+    },
+    {
+      "concurrency": 40,
+      "iterations": [
+        {
+          "duration_ns": 18347070,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 562
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 20185342,
+      "workload": "one_hop"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 75150582,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 2334
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 75170970,
+      "workload": "two_hop"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 3582177488,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "loose",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 3582199740,
+      "workload": "neighbourhood_3hop"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 3901379,
+          "error": "memgraph: ClientError: {code: Memgraph.ClientError.MemgraphError.MemgraphError} {message: line 1:69 extraneous input 'shortestPath' expecting '('}",
+          "index": 0,
+          "ok": false,
+          "rows": 0
+        }
+      ],
+      "note": "every measured iteration failed; last error: memgraph: ClientError: {code: Memgraph.ClientError.MemgraphError.MemgraphError} {message: line 1:69 extraneous input 'shortestPath' expecting '('}",
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "failed",
+      "target": "memgraph",
+      "wall_ns": 3925053,
+      "workload": "shortest_path"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 143540336,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 25
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 143555994,
+      "workload": "top_cited"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 17574303,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 25
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 17635526,
+      "workload": "date_filtered_top"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 938029,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": true
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 955061,
+      "workload": "mixed_read_write"
+    },
+    {
+      "concurrency": 10,
+      "iterations": [
+        {
+          "duration_ns": 1273043,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": true
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 2196087,
+      "workload": "mixed_read_write"
+    },
+    {
+      "concurrency": 40,
+      "iterations": [
+        {
+          "duration_ns": 1245282,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": true
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 5374172,
+      "workload": "mixed_read_write"
+    }
+  ]
+}

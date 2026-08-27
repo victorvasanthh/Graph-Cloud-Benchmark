@@ -1,0 +1,847 @@
+{
+  "baseline": "neo4j-selfhosted",
+  "consistency_issues": [],
+  "consistency_verdict": "only one target produced results, so no cross-engine check was possible",
+  "manifest": {
+    "dataset": "cit-HepTh",
+    "dataset_edges": 352768,
+    "dataset_nodes": 27770,
+    "finished_at": "2026-08-27T18:08:04+00:00",
+    "measured_iterations": 1,
+    "notes": [
+      "cognodb-cloud skipped (not configured: COGNODB_URI, COGNODB_PASSWORD unset)",
+      "aura-free skipped (not configured: AURA_URI, AURA_PASSWORD unset)",
+      "memgraph skipped (disabled in configuration)",
+      "falkordb skipped (disabled in configuration)",
+      "arangodb skipped (disabled in configuration)",
+      "neo4j-selfhosted server version: Neo4j Kernel 5.26.4 (community)"
+    ],
+    "platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.36",
+    "processor": "x86_64",
+    "python_version": "3.12.11",
+    "run_id": "smoke-20260827T180608Z-neo4j-selfhosted",
+    "schema_version": 1,
+    "seed": 20260827,
+    "started_at": "2026-08-27T18:06:52+00:00",
+    "warmup_iterations": 0
+  },
+  "workloads": {
+    "date_filtered_top": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 1190.290847,
+              "mean_ms": 1190.290847,
+              "min_ms": 1190.290847,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 1190.290847,
+              "p90_ms": 1190.290847,
+              "p95_ms": 1190.290847,
+              "p99_ms": 1190.290847,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 0.8401144282561648,
+              "wall_s": 1.190314041
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Most-cited papers published within a given year.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Filter on an ISO date string, then count incoming citations. Only about 41% of nodes carry a publication date in the source data, so this workload deliberately touches a minority of the graph; the absolute row counts are small by construction, not by accident.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 1190.290847,
+          "mean_ms": 1190.290847,
+          "min_ms": 1190.290847,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 1190.290847,
+          "p90_ms": 1190.290847,
+          "p95_ms": 1190.290847,
+          "p99_ms": 1190.290847,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 0.8401144282561648,
+          "wall_s": 1.190314041
+        }
+      }
+    },
+    "ingest": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "batches": 77,
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "edges_expected": 352768,
+              "edges_loaded": 352768,
+              "edges_per_second": 10426.231407544972,
+              "failures": 0,
+              "max_ms": 33834.660503,
+              "mean_ms": 33834.660503,
+              "min_ms": 33834.660503,
+              "n": 1,
+              "nodes_expected": 27770,
+              "nodes_loaded": 27770,
+              "nodes_per_second": 820.7559817997208,
+              "p50_ms": 33834.660503,
+              "p90_ms": 33834.660503,
+              "p95_ms": 33834.660503,
+              "p99_ms": 33834.660503,
+              "relative_p50": 1.0,
+              "rows_returned": 352768,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 0.029555490882236975,
+              "wall_s": 33.834660503
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "",
+      "equivalence": "n/a",
+      "equivalence_note": "",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "batches": 77,
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "edges_expected": 352768,
+          "edges_loaded": 352768,
+          "edges_per_second": 10426.231407544972,
+          "failures": 0,
+          "max_ms": 33834.660503,
+          "mean_ms": 33834.660503,
+          "min_ms": 33834.660503,
+          "n": 1,
+          "nodes_expected": 27770,
+          "nodes_loaded": 27770,
+          "nodes_per_second": 820.7559817997208,
+          "p50_ms": 33834.660503,
+          "p90_ms": 33834.660503,
+          "p95_ms": 33834.660503,
+          "p99_ms": 33834.660503,
+          "relative_p50": 1.0,
+          "rows_returned": 352768,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 0.029555490882236975,
+          "wall_s": 33.834660503
+        }
+      }
+    },
+    "mixed_read_write": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 4.951985,
+              "mean_ms": 4.951985,
+              "min_ms": 4.951985,
+              "mutates": true,
+              "n": 1,
+              "p50_ms": 4.951985,
+              "p90_ms": 4.951985,
+              "p95_ms": 4.951985,
+              "p99_ms": 4.951985,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 200.92497822977862,
+              "wall_s": 0.004976982
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 8.12667,
+              "mean_ms": 8.12667,
+              "min_ms": 8.12667,
+              "mutates": true,
+              "n": 1,
+              "p50_ms": 8.12667,
+              "p90_ms": 8.12667,
+              "p95_ms": 8.12667,
+              "p99_ms": 8.12667,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 107.62187827944041,
+              "wall_s": 0.009291791
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 45.004905,
+              "mean_ms": 45.004905,
+              "min_ms": 45.004905,
+              "mutates": true,
+              "n": 1,
+              "p50_ms": 45.004905,
+              "p90_ms": 45.004905,
+              "p95_ms": 45.004905,
+              "p99_ms": 45.004905,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 21.088468656630805,
+              "wall_s": 0.04741928
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Read-heavy mix: one-hop expansion with interleaved counter updates.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "The read is the one_hop expansion; the write increments a counter property on a single paper. The write deliberately touches only a property and never the graph structure, so it cannot change what any other workload measures. Read and write positions in the sequence are fixed by the seed and identical on every engine.",
+      "mutates": true,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 4.951985,
+          "mean_ms": 4.951985,
+          "min_ms": 4.951985,
+          "mutates": true,
+          "n": 1,
+          "p50_ms": 4.951985,
+          "p90_ms": 4.951985,
+          "p95_ms": 4.951985,
+          "p99_ms": 4.951985,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 200.92497822977862,
+          "wall_s": 0.004976982
+        }
+      }
+    },
+    "neighbourhood_3hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "loose",
+              "failures": 0,
+              "max_ms": 791.328916,
+              "mean_ms": 791.328916,
+              "min_ms": 791.328916,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 791.328916,
+              "p90_ms": 791.328916,
+              "p95_ms": 791.328916,
+              "p99_ms": 791.328916,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 1.2636561695283612,
+              "wall_s": 0.791354503
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Size of the undirected three-hop neighbourhood of a paper.",
+      "equivalence": "loose",
+      "equivalence_note": "The two engines are asked for the same number and allowed to reach it differently. Cypher enumerates paths and deduplicates with count(DISTINCT ...); AQL uses uniqueVertices:'global', which prunes during the walk. That is a genuine difference in work done, so this row compares engine-plus-optimiser rather than raw traversal speed, and it is the one workload here whose ratio should not be quoted on its own.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "loose",
+          "failures": 0,
+          "max_ms": 791.328916,
+          "mean_ms": 791.328916,
+          "min_ms": 791.328916,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 791.328916,
+          "p90_ms": 791.328916,
+          "p95_ms": 791.328916,
+          "p99_ms": 791.328916,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 1.2636561695283612,
+          "wall_s": 0.791354503
+        }
+      }
+    },
+    "one_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 555.623088,
+              "mean_ms": 555.623088,
+              "min_ms": 555.623088,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 555.623088,
+              "p90_ms": 555.623088,
+              "p95_ms": 555.623088,
+              "p99_ms": 555.623088,
+              "relative_p50": 1.0,
+              "rows_returned": 562,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 1.7996341246644314,
+              "wall_s": 0.555668503
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 120.612032,
+              "mean_ms": 120.612032,
+              "min_ms": 120.612032,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 120.612032,
+              "p90_ms": 120.612032,
+              "p95_ms": 120.612032,
+              "p99_ms": 120.612032,
+              "relative_p50": 1.0,
+              "rows_returned": 562,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 8.133691866470807,
+              "wall_s": 0.1229454
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 37.686053,
+              "mean_ms": 37.686053,
+              "min_ms": 37.686053,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 37.686053,
+              "p90_ms": 37.686053,
+              "p95_ms": 37.686053,
+              "p99_ms": 37.686053,
+              "relative_p50": 1.0,
+              "rows_returned": 562,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 25.280440987967722,
+              "wall_s": 0.039556272
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Papers directly cited by a given paper.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A single OUTBOUND edge step in both dialects.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 555.623088,
+          "mean_ms": 555.623088,
+          "min_ms": 555.623088,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 555.623088,
+          "p90_ms": 555.623088,
+          "p95_ms": 555.623088,
+          "p99_ms": 555.623088,
+          "relative_p50": 1.0,
+          "rows_returned": 562,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 1.7996341246644314,
+          "wall_s": 0.555668503
+        }
+      }
+    },
+    "point_lookup": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 355.918213,
+              "mean_ms": 355.918213,
+              "min_ms": 355.918213,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 355.918213,
+              "p90_ms": 355.918213,
+              "p95_ms": 355.918213,
+              "p99_ms": 355.918213,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 2.809405787189377,
+              "wall_s": 0.355947156
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 10.406851,
+              "mean_ms": 10.406851,
+              "min_ms": 10.406851,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 10.406851,
+              "p90_ms": 10.406851,
+              "p95_ms": 10.406851,
+              "p99_ms": 10.406851,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 84.81188004105913,
+              "wall_s": 0.011790801
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 10.303158,
+              "mean_ms": 10.303158,
+              "min_ms": 10.303158,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 10.303158,
+              "p90_ms": 10.303158,
+              "p95_ms": 10.303158,
+              "p99_ms": 10.303158,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 63.277646684070966,
+              "wall_s": 0.015803369
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Fetch a single paper by id.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher resolves the unique constraint on :Paper(id); AQL resolves the primary index via DOCUMENT(). Both are the engine's fastest single-key access path, which is the property being held equal.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 355.918213,
+          "mean_ms": 355.918213,
+          "min_ms": 355.918213,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 355.918213,
+          "p90_ms": 355.918213,
+          "p95_ms": 355.918213,
+          "p99_ms": 355.918213,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 2.809405787189377,
+          "wall_s": 0.355947156
+        }
+      }
+    },
+    "shortest_path": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 409.866118,
+              "mean_ms": 409.866118,
+              "min_ms": 409.866118,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 409.866118,
+              "p90_ms": 409.866118,
+              "p95_ms": 409.866118,
+              "p99_ms": 409.866118,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 2.439677188355185,
+              "wall_s": 0.409890294
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Hop count of the shortest undirected path between two papers.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Both sides run the engine's built-in shortest-path operator and return a single row holding the hop count. Pairs are pre-validated as reachable, so no engine is credited for failing fast on a disconnected pair.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 409.866118,
+          "mean_ms": 409.866118,
+          "min_ms": 409.866118,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 409.866118,
+          "p90_ms": 409.866118,
+          "p95_ms": 409.866118,
+          "p99_ms": 409.866118,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 2.439677188355185,
+          "wall_s": 0.409890294
+        }
+      }
+    },
+    "top_cited": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 1686.531126,
+              "mean_ms": 1686.531126,
+              "min_ms": 1686.531126,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 1686.531126,
+              "p90_ms": 1686.531126,
+              "p95_ms": 1686.531126,
+              "p99_ms": 1686.531126,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 0.5929251376865703,
+              "wall_s": 1.686553557
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "The most-cited papers in the corpus, by in-degree.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A full scan and grouping of every edge in both dialects. This is the workload least sensitive to modelling choices and the most sensitive to how much memory the tier allows.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 1686.531126,
+          "mean_ms": 1686.531126,
+          "min_ms": 1686.531126,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 1686.531126,
+          "p90_ms": 1686.531126,
+          "p95_ms": 1686.531126,
+          "p99_ms": 1686.531126,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 0.5929251376865703,
+          "wall_s": 1.686553557
+        }
+      }
+    },
+    "two_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 759.814597,
+              "mean_ms": 759.814597,
+              "min_ms": 759.814597,
+              "mutates": false,
+              "n": 1,
+              "p50_ms": 759.814597,
+              "p90_ms": 759.814597,
+              "p95_ms": 759.814597,
+              "p99_ms": 759.814597,
+              "relative_p50": 1.0,
+              "rows_returned": 2334,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 1.316074339706717,
+              "wall_s": 0.759835497
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Distinct papers exactly two citation hops downstream.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher variable-length patterns are relationship-isomorphic, so no edge repeats within a path. The AQL traversal is pinned to uniqueEdges:'path' to match that exactly rather than relying on the default, which has changed between ArangoDB versions.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 759.814597,
+          "mean_ms": 759.814597,
+          "min_ms": 759.814597,
+          "mutates": false,
+          "n": 1,
+          "p50_ms": 759.814597,
+          "p90_ms": 759.814597,
+          "p95_ms": 759.814597,
+          "p99_ms": 759.814597,
+          "relative_p50": 1.0,
+          "rows_returned": 2334,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 1.316074339706717,
+          "wall_s": 0.759835497
+        }
+      }
+    }
+  }
+}

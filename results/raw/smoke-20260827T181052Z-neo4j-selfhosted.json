@@ -1,0 +1,347 @@
+{
+  "manifest": {
+    "dataset": "cit-HepTh",
+    "dataset_edges": 352768,
+    "dataset_nodes": 27770,
+    "finished_at": "2026-08-27T18:12:40+00:00",
+    "measured_iterations": 1,
+    "notes": [
+      "cognodb-cloud skipped (not configured: COGNODB_URI, COGNODB_PASSWORD unset)",
+      "aura-free skipped (not configured: AURA_URI, AURA_PASSWORD unset)",
+      "memgraph skipped (disabled in configuration)",
+      "falkordb skipped (disabled in configuration)",
+      "arangodb skipped (disabled in configuration)",
+      "neo4j-selfhosted server version: Neo4j Kernel 5.26.4 (community)"
+    ],
+    "platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.36",
+    "processor": "x86_64",
+    "python_version": "3.12.11",
+    "run_id": "smoke-20260827T181052Z-neo4j-selfhosted",
+    "schema_version": 1,
+    "seed": 20260827,
+    "started_at": "2026-08-27T18:11:30+00:00",
+    "warmup_iterations": 0
+  },
+  "runs": [
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 32067685076,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 352768
+        }
+      ],
+      "note": null,
+      "scale": {
+        "batches": 77,
+        "edges_expected": 352768,
+        "edges_loaded": 352768,
+        "edges_per_second": 11000.731707447681,
+        "nodes_expected": 27770,
+        "nodes_loaded": 27770,
+        "nodes_per_second": 865.9808132138463
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 32067685076,
+      "workload": "ingest"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 327220833,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 327252232,
+      "workload": "point_lookup"
+    },
+    {
+      "concurrency": 10,
+      "iterations": [
+        {
+          "duration_ns": 10670874,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 11771068,
+      "workload": "point_lookup"
+    },
+    {
+      "concurrency": 40,
+      "iterations": [
+        {
+          "duration_ns": 7963754,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 9909886,
+      "workload": "point_lookup"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 593648445,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 562
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 593672108,
+      "workload": "one_hop"
+    },
+    {
+      "concurrency": 10,
+      "iterations": [
+        {
+          "duration_ns": 102143895,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 562
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 103075363,
+      "workload": "one_hop"
+    },
+    {
+      "concurrency": 40,
+      "iterations": [
+        {
+          "duration_ns": 58429383,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 562
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 60577781,
+      "workload": "one_hop"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 1026720710,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 2334
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 1026746608,
+      "workload": "two_hop"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 973541738,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "loose",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 973565773,
+      "workload": "neighbourhood_3hop"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 406060660,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 406084575,
+      "workload": "shortest_path"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 1511901297,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 25
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 1511926615,
+      "workload": "top_cited"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 1205939505,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 25
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 1205964383,
+      "workload": "date_filtered_top"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 4971162,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": true
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 4994456,
+      "workload": "mixed_read_write"
+    },
+    {
+      "concurrency": 10,
+      "iterations": [
+        {
+          "duration_ns": 8041551,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": true
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 8852961,
+      "workload": "mixed_read_write"
+    },
+    {
+      "concurrency": 40,
+      "iterations": [
+        {
+          "duration_ns": 48269235,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": true
+      },
+      "status": "ok",
+      "target": "neo4j-selfhosted",
+      "wall_ns": 51296662,
+      "workload": "mixed_read_write"
+    }
+  ]
+}

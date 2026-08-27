@@ -1,0 +1,347 @@
+{
+  "manifest": {
+    "dataset": "cit-HepTh",
+    "dataset_edges": 352768,
+    "dataset_nodes": 27770,
+    "finished_at": "2026-08-27T18:08:33+00:00",
+    "measured_iterations": 1,
+    "notes": [
+      "cognodb-cloud skipped (not configured: COGNODB_URI, COGNODB_PASSWORD unset)",
+      "aura-free skipped (not configured: AURA_URI, AURA_PASSWORD unset)",
+      "neo4j-selfhosted skipped (disabled in configuration)",
+      "falkordb skipped (disabled in configuration)",
+      "arangodb skipped (disabled in configuration)",
+      "memgraph server version: 2.22.0"
+    ],
+    "platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.36",
+    "processor": "x86_64",
+    "python_version": "3.12.11",
+    "run_id": "smoke-20260827T180608Z-memgraph",
+    "schema_version": 1,
+    "seed": 20260827,
+    "started_at": "2026-08-27T18:08:16+00:00",
+    "warmup_iterations": 0
+  },
+  "runs": [
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 7053346640,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 352768
+        }
+      ],
+      "note": null,
+      "scale": {
+        "batches": 77,
+        "edges_expected": 352768,
+        "edges_loaded": 352768,
+        "edges_per_second": 50014.272373830194,
+        "nodes_expected": 27770,
+        "nodes_loaded": 27770,
+        "nodes_per_second": 3937.1381299360046
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 7053346640,
+      "workload": "ingest"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 1770772,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 1796441,
+      "workload": "point_lookup"
+    },
+    {
+      "concurrency": 10,
+      "iterations": [
+        {
+          "duration_ns": 1264340,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 2307334,
+      "workload": "point_lookup"
+    },
+    {
+      "concurrency": 40,
+      "iterations": [
+        {
+          "duration_ns": 1241906,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 5770583,
+      "workload": "point_lookup"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 16667100,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 562
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 16688921,
+      "workload": "one_hop"
+    },
+    {
+      "concurrency": 10,
+      "iterations": [
+        {
+          "duration_ns": 13459233,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 562
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 14158411,
+      "workload": "one_hop"
+    },
+    {
+      "concurrency": 40,
+      "iterations": [
+        {
+          "duration_ns": 18298920,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 562
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 20235165,
+      "workload": "one_hop"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 69378528,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 2334
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 69400057,
+      "workload": "two_hop"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 4106324277,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "loose",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 4106345707,
+      "workload": "neighbourhood_3hop"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 9408339,
+          "error": "memgraph: ClientError: {code: Memgraph.ClientError.MemgraphError.MemgraphError} {message: line 1:69 extraneous input 'shortestPath' expecting '('}",
+          "index": 0,
+          "ok": false,
+          "rows": 0
+        }
+      ],
+      "note": "every measured iteration failed; last error: memgraph: ClientError: {code: Memgraph.ClientError.MemgraphError.MemgraphError} {message: line 1:69 extraneous input 'shortestPath' expecting '('}",
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "failed",
+      "target": "memgraph",
+      "wall_ns": 9435359,
+      "workload": "shortest_path"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 236708067,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 25
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 236728045,
+      "workload": "top_cited"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 29386823,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 25
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": false
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 29411409,
+      "workload": "date_filtered_top"
+    },
+    {
+      "concurrency": 1,
+      "iterations": [
+        {
+          "duration_ns": 1462718,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": true
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 1483467,
+      "workload": "mixed_read_write"
+    },
+    {
+      "concurrency": 10,
+      "iterations": [
+        {
+          "duration_ns": 1526237,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": true
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 2649925,
+      "workload": "mixed_read_write"
+    },
+    {
+      "concurrency": 40,
+      "iterations": [
+        {
+          "duration_ns": 1876280,
+          "error": null,
+          "index": 0,
+          "ok": true,
+          "rows": 1
+        }
+      ],
+      "note": null,
+      "scale": {
+        "equivalence": "idiomatic",
+        "mutates": true
+      },
+      "status": "ok",
+      "target": "memgraph",
+      "wall_ns": 7253570,
+      "workload": "mixed_read_write"
+    }
+  ]
+}
