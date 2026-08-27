@@ -28,6 +28,7 @@ PROBES = {
     "cypher": "RETURN 1 AS ok",
     "cypher_memgraph": "RETURN 1 AS ok",
     "cypher_falkordb": "RETURN 1 AS ok",
+    "cypher_cognodb": "RETURN 1 AS ok",
     "aql": "RETURN 1",
 }
 

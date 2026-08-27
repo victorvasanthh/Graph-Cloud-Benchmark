@@ -35,12 +35,22 @@ class _Flavour:
     #: idea with a BFS expansion, so it needs a way to opt into different text
     #: for the statements that actually differ while sharing the rest.
     dialects: tuple[str, ...] = ("cypher",)
-    #: Statement that lists indexes, used to prove the index really exists.
-    index_probe: str = ""
+    #: Statements that list indexes, tried in order until one is accepted, used
+    #: to prove the index really exists. A tuple rather than one string because
+    #: an engine whose DDL we had to guess at is also an engine whose
+    #: introspection we cannot assume.
+    index_probes: tuple[str, ...] = ()
     #: Memgraph rejects `CREATE CONSTRAINT ... IF NOT EXISTS`, and re-running a
     #: constraint that already exists is an error there rather than a no-op.
     #: Schema DDL is therefore allowed to fail without failing the run.
     tolerate_schema_errors: bool = False
+    #: Set when the engine cannot chunk a delete server-side. The statement is
+    #: run repeatedly, each pass deleting at most `reset_batch_size` nodes and
+    #: returning how many it removed, until it removes none. `{batch}` is
+    #: substituted with the size, because no engine here accepts a parameter in
+    #: a LIMIT clause.
+    reset_batch: str = ""
+    reset_batch_size: int = 10_000
 
 
 _NEO4J = _Flavour(
@@ -54,7 +64,7 @@ _NEO4J = _Flavour(
         "RETURN name + ' ' + versions[0] + ' (' + edition + ')' AS version",
     ),
     dialects=("cypher",),
-    index_probe="SHOW INDEXES YIELD labelsOrTypes, properties RETURN labelsOrTypes, properties",
+    index_probes=("SHOW INDEXES YIELD labelsOrTypes, properties RETURN labelsOrTypes, properties",),
 )
 
 _MEMGRAPH = _Flavour(
@@ -65,11 +75,51 @@ _MEMGRAPH = _Flavour(
     reset=("MATCH (n) DETACH DELETE n",),
     version_probes=("SHOW VERSION",),
     dialects=("cypher_memgraph", "cypher"),
-    index_probe="SHOW INDEX INFO",
+    index_probes=("SHOW INDEX INFO",),
     tolerate_schema_errors=True,
 )
 
-FLAVOURS: dict[str, _Flavour] = {"neo4j": _NEO4J, "memgraph": _MEMGRAPH}
+_COGNODB = _Flavour(
+    # CognoDB speaks Bolt and Cypher, but a narrower Cypher than Neo4j 5. The
+    # neo4j flavour's reset failed here with `unexpected token IN` at position
+    # 42 - exactly where `CALL { ... } IN TRANSACTIONS` begins. That construct
+    # arrived in Neo4j 4.4, so connectivity working says nothing about which
+    # language level is implemented.
+    #
+    # Every alternative spelling of the schema is attempted and failures are
+    # tolerated, because we do not know which DDL generation this engine
+    # accepts. That would be reckless on its own, so schema_is_ready() confirms
+    # afterwards that an index actually exists: guessing is only acceptable
+    # when the guess is verified.
+    schema=(
+        "CREATE CONSTRAINT paper_id IF NOT EXISTS FOR (p:Paper) REQUIRE p.id IS UNIQUE",
+        "CREATE CONSTRAINT ON (p:Paper) ASSERT p.id IS UNIQUE",
+        "CREATE INDEX ON :Paper(id)",
+    ),
+    # No server-side chunking available, so the delete is driven from the
+    # client. Slower than IN TRANSACTIONS, and it is only setup - never timed,
+    # never part of a measurement.
+    reset=(),
+    reset_batch="MATCH (n) WITH n LIMIT {batch} DETACH DELETE n RETURN count(n) AS deleted",
+    reset_batch_size=5_000,
+    version_probes=(
+        "CALL dbms.components() YIELD name, versions, edition "
+        "RETURN name + ' ' + versions[0] + ' (' + edition + ')' AS version",
+        "SHOW VERSION",
+    ),
+    dialects=("cypher_cognodb", "cypher"),
+    index_probes=(
+        "SHOW INDEXES YIELD labelsOrTypes, properties RETURN labelsOrTypes, properties",
+        "CALL db.indexes()",
+    ),
+    tolerate_schema_errors=True,
+)
+
+FLAVOURS: dict[str, _Flavour] = {
+    "neo4j": _NEO4J,
+    "memgraph": _MEMGRAPH,
+    "cognodb": _COGNODB,
+}
 
 _NODE_INGEST = """
 UNWIND $rows AS row
@@ -167,9 +217,37 @@ class BoltAdapter(GraphAdapter):
     # -- data --------------------------------------------------------------
 
     def reset(self) -> None:
+        if self.flavour.reset_batch:
+            self._reset_in_batches()
+            return
         with self._session() as session:
             for statement in self.flavour.reset:
                 session.run(statement).consume()
+
+    def _reset_in_batches(self) -> None:
+        """Delete everything from the client, for engines that cannot chunk.
+
+        Neo4j chunks server-side with CALL { ... } IN TRANSACTIONS. CognoDB
+        does not implement that construct, so the loop lives here instead:
+        delete a bounded slice, ask how many went, repeat until none do.
+
+        The iteration ceiling is a guard against a delete that reports progress
+        forever - a bug in the engine or in this statement would otherwise hang
+        setup with no diagnosis. It is generous enough that a legitimate reset
+        of this dataset never approaches it.
+        """
+        statement = self.flavour.reset_batch.format(batch=self.flavour.reset_batch_size)
+        max_passes = 10_000
+        with self._session() as session:
+            for _ in range(max_passes):
+                record = session.run(statement).single()
+                deleted = int(record[0]) if record is not None else 0
+                if deleted == 0:
+                    return
+        raise WorkloadFailure(
+            f"{self.name}: batched reset still deleting after {max_passes} passes; "
+            f"aborting rather than looping forever"
+        )
 
     def prepare_schema(self) -> None:
         with self._session() as session:
@@ -183,13 +261,17 @@ class BoltAdapter(GraphAdapter):
                         ) from exc
 
     def schema_is_ready(self) -> bool | None:
-        probe = self.flavour.index_probe
-        if not probe:
-            return None
-        try:
-            with self._session() as session:
-                rows = [str(record.values()) for record in session.run(probe)]
-        except Exception:
+        rows: list[str] | None = None
+        for probe in self.flavour.index_probes:
+            try:
+                with self._session() as session:
+                    rows = [str(record.values()) for record in session.run(probe)]
+                break
+            except Exception:
+                # This spelling was rejected; try the next. Only when every
+                # probe fails do we admit we cannot tell.
+                continue
+        if rows is None:
             # Not being able to ask is different from the answer being no.
             return None
         # Both SHOW INDEXES (Neo4j) and SHOW INDEX INFO (Memgraph) return the

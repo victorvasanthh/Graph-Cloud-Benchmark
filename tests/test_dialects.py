@@ -152,12 +152,12 @@ class TestFlavourTable:
             assert flavour.dialects, f"{name} declares no dialects"
             # Without a probe the harness cannot tell "index created" from
             # "DDL silently tolerated", which is the whole point of the check.
-            assert flavour.index_probe, f"{name} has no index probe"
+            assert flavour.index_probes, f"{name} has no index probe"
 
     def test_memgraph_tolerates_schema_errors_but_is_still_verified(self):
         memgraph = FLAVOURS["memgraph"]
         assert memgraph.tolerate_schema_errors is True
-        assert memgraph.index_probe, (
+        assert memgraph.index_probes, (
             "tolerating DDL errors is only safe because the index is confirmed separately"
         )
 

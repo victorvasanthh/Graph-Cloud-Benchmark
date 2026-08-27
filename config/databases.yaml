@@ -30,10 +30,14 @@ targets:
       region: COGNODB_REGION
     required: [uri, password]
     settings:
-      # CognoDB advertises Bolt 5.0-5.4 and Neo4j-compatible Cypher, so it gets
-      # the neo4j flavour for index DDL and bulk delete. If its DDL turns out
-      # to differ, change this line rather than the adapter.
-      flavour: neo4j
+      # Verified against a live instance rather than assumed. Bolt, TLS and
+      # `RETURN 1` all work, but the neo4j flavour's reset was rejected with
+      # `unexpected token IN` at position 42 - exactly where
+      # `CALL { ... } IN TRANSACTIONS` begins. That construct arrived in
+      # Neo4j 4.4, so this engine implements an older Cypher level. Its own
+      # flavour deletes from the client instead and verifies afterwards that
+      # the index really exists.
+      flavour: cognodb
     resources:
       cpus: 1
       memory_gb: 1
