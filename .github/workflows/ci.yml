@@ -39,6 +39,13 @@ jobs:
       - name: Install dependencies
         run: pip install --no-cache-dir -r requirements-dev.txt
 
+      - name: Line endings
+        # A shell script committed with CRLF fails on Linux as
+        # A shell script committed with CRLF fails on Linux with a
+        # carriage-return error that points nowhere near the cause.
+        # Checked before the tests so the diagnosis is the first thing read.
+        run: python scripts/fix_line_endings.py --check
+
       - name: Lint
         run: |
           python -m ruff check .

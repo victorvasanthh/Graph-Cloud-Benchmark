@@ -1,0 +1,42 @@
+# Line endings are normalised here rather than left to each machine's git
+# configuration, because getting them wrong is not a cosmetic problem.
+#
+# A shell script checked out with CRLF fails in a way that reads as nonsense:
+#
+#   $'\r': command not found
+#   set: pipefail: invalid option name
+#
+# bash treats the carriage return as part of the command name. That cost a
+# smoke run: run_suite.sh had been committed with CRLF from a Windows editor,
+# and the Codespace faithfully executed a script whose every line ended in an
+# invisible character.
+#
+# `* text=auto` tells git to normalise line endings to LF in the repository
+# for anything it detects as text. The explicit rules below remove the
+# guesswork for the files where being wrong actually breaks something.
+
+* text=auto eol=lf
+
+# Executed by a shell. CRLF here is a hard failure, never a nuisance.
+*.sh        text eol=lf
+Makefile    text eol=lf
+
+# Consumed by Linux tooling inside containers.
+Dockerfile  text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+
+# Source and config. LF everywhere keeps diffs meaningful across machines.
+*.py        text eol=lf
+*.md        text eol=lf
+*.json      text eol=lf
+*.toml      text eol=lf
+*.txt       text eol=lf
+.env.example text eol=lf
+
+# Binary: never touch these. Normalising a gzip would corrupt it, and the
+# dataset is checksum-verified, so corruption would surface as a confusing
+# integrity failure rather than as a line-ending mistake.
+*.gz        binary
+*.png       binary
+*.pdf       binary

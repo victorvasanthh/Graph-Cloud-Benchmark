@@ -118,12 +118,8 @@ class TestReadinessGate:
         assert not gating, f"health state is still deciding whether the run proceeds: {gating}"
 
     def test_probe_covers_every_dialect_an_adapter_can_declare(self):
-        import sys
-
-        sys.path.insert(0, str(REPO_ROOT / "scripts"))
-        from wait_for_target import PROBES
-
         from benchmark.databases.bolt import FLAVOURS
+        from benchmark.runners.readiness import PROBES
 
         declared = {d for flavour in FLAVOURS.values() for d in flavour.dialects}
         declared |= {"cypher_falkordb", "aql"}

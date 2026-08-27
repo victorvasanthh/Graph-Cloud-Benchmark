@@ -25,6 +25,7 @@ from benchmark.datasets import load_cit_hepth  # noqa: E402
 from benchmark.reporting.summary import build_summary, write_summary  # noqa: E402
 from benchmark.reporting.tables import render_status_table  # noqa: E402
 from benchmark.runners import Progress, run_benchmark  # noqa: E402
+from benchmark.runners.readiness import wait_for  # noqa: E402
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -57,6 +58,24 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "name this run instead of using a timestamp; lets an orchestrating script "
             "know the output path in advance rather than guessing at the newest file"
+        ),
+    )
+    parser.add_argument(
+        "--wait-seconds",
+        type=float,
+        default=60.0,
+        help=(
+            "wait this long for each target to answer a query before measuring "
+            "(0 disables). Guards against measuring a container that is still booting."
+        ),
+    )
+    parser.add_argument(
+        "--wait-seconds",
+        type=float,
+        default=60.0,
+        help=(
+            "wait this long for each target to answer a query before measuring "
+            "(0 disables). Guards against measuring a container that is still booting."
         ),
     )
     parser.add_argument("--dry-run", action="store_true", help="print the plan and exit")
@@ -112,6 +131,29 @@ def main() -> int:
     if args.dry_run:
         print("\ndry run: nothing was measured")
         return 0
+
+    if args.wait_seconds > 0:
+        # Probed before the dataset is parsed: reading 350k edges takes seconds
+        # we would rather not spend discovering that nothing is listening.
+        #
+        # The probe is the real adapter executing a real statement. A weaker
+        # check - a TCP connect, a port scan, the container health flag - can
+        # pass while the engine is still refusing queries, which would turn a
+        # startup race into a row of measurements that never happened.
+        print("\nwaiting for targets to accept queries...")
+        for target in active:
+
+            def report(attempt: int, detail: str, remaining: int, name=target.name) -> None:
+                print(f"  {name}: not ready ({detail}); {remaining}s left", flush=True)
+
+            ready, detail = wait_for(target, args.wait_seconds, on_attempt=report)
+            if ready:
+                print(f"  {target.name}: ready")
+            else:
+                # Not fatal. The runner records an unreachable target as
+                # unavailable in every table, which is the honest outcome. A
+                # hard exit here would discard the targets that *are* up.
+                print(f"  {target.name}: NOT ready - {detail}", file=sys.stderr)
 
     print("\nloading dataset...")
     graph = load_cit_hepth(data_dir=args.data_dir, verify=not args.no_verify_checksum)

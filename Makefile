@@ -73,7 +73,16 @@ smoke:  ## Feasibility check: 1 iteration per workload, every target
 suite:  ## The real run: each target in isolation, then merge and report
 	bash scripts/run_suite.sh
 
-bench:  ## Measure a single target: make bench TARGET=memgraph
+bench-one:  ## Start ONE engine, wait for it, measure it, tear it down
+	@test -n "$(SERVICE)" || { echo "usage: make bench-one SERVICE=arangodb TARGET=arangodb"; exit 2; }
+	@test -n "$(TARGET)"  || { echo "usage: make bench-one SERVICE=arangodb TARGET=arangodb"; exit 2; }
+	$(COMPOSE) up -d $(SERVICE)
+	$(PYTHON) scripts/wait_for_target.py $(TARGET) --timeout 300
+	$(PYTHON) scripts/probe_limits.py || echo "  (limit findings above; recorded, continuing)"
+	$(PYTHON) scripts/run_benchmark.py --target $(TARGET)
+	$(COMPOSE) rm -sf $(SERVICE)
+
+bench:  ## Measure a target that is ALREADY running (see bench-one)
 	$(PYTHON) scripts/run_benchmark.py $(if $(TARGET),--target $(TARGET),)
 
 report:  ## Rebuild the report and charts from the most recent run
