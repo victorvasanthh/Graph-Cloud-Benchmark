@@ -33,6 +33,12 @@ data:  ## Download and checksum-verify the cit-HepTh dataset
 doctor:  ## Verify docker, compose, and that cgroup limits are really enforced
 	bash scripts/check_runtime.sh
 
+verify-config:  ## Show the commit, pinned vs running images, and resolved queries
+	$(PYTHON) scripts/show_effective_config.py
+
+reset:  ## Remove containers AND volumes, so a new image starts on clean data
+	$(COMPOSE) down -v
+
 probe:  ## Report the resource limits actually enforced, vs the config
 	$(PYTHON) scripts/probe_limits.py
 

@@ -132,7 +132,9 @@ class TestShellScripts:
         code = [
             line for line in text.splitlines() if line.strip() and not line.lstrip().startswith("#")
         ]
-        errexit = [line for line in code if line.strip().startswith(("set -e", "set -eu", "set -o"))]
+        errexit = [
+            line for line in code if line.strip().startswith(("set -e", "set -eu", "set -o"))
+        ]
         # A half-created Codespace you can debug beats a failed creation you
         # cannot. Every step reports its own outcome and the script exits 0.
         assert not errexit, f"post-create must not abort on a single failed step: {errexit}"

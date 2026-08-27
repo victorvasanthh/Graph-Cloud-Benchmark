@@ -440,9 +440,9 @@ class TestIntegrityChecks:
         # An engine measured without the index every other engine got is not
         # slow, it is answering a different question - and the difference would
         # look exactly like a performance finding.
-        assert any(
-            "index could not be confirmed" in note for note in results.manifest.notes
-        ), results.manifest.notes
+        assert any("index could not be confirmed" in note for note in results.manifest.notes), (
+            results.manifest.notes
+        )
         assert results.find("engine-b", "ingest").scale["index_verified"] is False
 
     def test_unverifiable_index_is_recorded_as_assumed(self, toy_graph, monkeypatch):
