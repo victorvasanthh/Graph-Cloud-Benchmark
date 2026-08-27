@@ -62,11 +62,25 @@ parity) and §10 (how this benchmark could still mislead you).
    **2-core / 8 GB** machine; the setup is designed to fit it.
 3. In the Codespace terminal:
 
+If creation ever fails during the feature install, rebuild with
+**Ctrl/Cmd-Shift-P → Codespaces: Rebuild Container** (use *Full Rebuild* to
+bypass the image cache). The devcontainer builds from a local
+[`Dockerfile`](.devcontainer/Dockerfile) specifically so that the image's stale
+Yarn APT source is removed before `docker-in-docker` runs `apt-get update` —
+without that, the install dies on `NO_PUBKEY 62D54FD4003F6525`.
+
 ```bash
+make doctor               # confirm docker, compose, and enforced cgroup limits
 make env                  # generate .env with passwords for the four containers
 make smoke                # feasibility check: 1 iteration, proves the plumbing
 make suite                # the real run, then merge + report
 ```
+
+`make doctor` runs automatically at Codespace creation. It checks more than
+`docker --version`: it starts a throwaway container under `--cpus` and
+`--memory` and reads the cgroup files back, because a nested Docker daemon can
+report healthy while silently ignoring both. A parity benchmark run under caps
+that were never applied is worthless, and looks identical to a good one.
 
 `make env` needs no external account: the four self-hosted engines are the
 default scope, and their passwords are generated rather than chosen. Add

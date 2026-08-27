@@ -30,6 +30,9 @@ env:  ## Write .env with generated passwords for the self-hosted targets
 data:  ## Download and checksum-verify the cit-HepTh dataset
 	$(PYTHON) scripts/download_data.py
 
+doctor:  ## Verify docker, compose, and that cgroup limits are really enforced
+	bash scripts/check_runtime.sh
+
 probe:  ## Report the resource limits actually enforced, vs the config
 	$(PYTHON) scripts/probe_limits.py
 
