@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from ..core.config import TargetConfig
-from ..core.errors import ConnectionFailure, WorkloadFailure
+from ..core.errors import ConnectionFailure, ConnectionLost, WorkloadFailure
 from .base import GraphAdapter, IngestPayload, IngestReport
 
 
@@ -51,6 +51,17 @@ class _Flavour:
     #: a LIMIT clause.
     reset_batch: str = ""
     reset_batch_size: int = 10_000
+    #: Run after DDL, best effort. Index creation is asynchronous on several
+    #: engines, so a catalogue queried microseconds after CREATE can honestly
+    #: report nothing.
+    await_statements: tuple[str, ...] = ()
+    #: EXPLAIN of the point lookup. Asking the planner whether it will use an
+    #: index is a stronger check than asking the catalogue whether one is
+    #: listed: it tests the property the benchmark depends on rather than the
+    #: bookkeeping around it, and it works even when introspection does not.
+    plan_probe: str = ""
+    #: Plan operators that mean the lookup resolved through an index.
+    plan_index_markers: tuple[str, ...] = ("IndexSeek", "NodeUniqueIndexSeek", "NodeIndexSeek")
 
 
 _NEO4J = _Flavour(
@@ -65,6 +76,13 @@ _NEO4J = _Flavour(
     ),
     dialects=("cypher",),
     index_probes=("SHOW INDEXES YIELD labelsOrTypes, properties RETURN labelsOrTypes, properties",),
+    # Neo4j's catalogue is reliable, so these are belt and braces here rather
+    # than the primary evidence. They are still declared: a verification that
+    # only runs against the engine which failed is a vendor-specific check
+    # pretending to be a general one, and it would never catch the same fault
+    # arriving somewhere else.
+    await_statements=("CALL db.awaitIndexes(60)",),
+    plan_probe="EXPLAIN MATCH (p:Paper {id: 1001}) RETURN p",
 )
 
 _MEMGRAPH = _Flavour(
@@ -108,10 +126,19 @@ _COGNODB = _Flavour(
         "SHOW VERSION",
     ),
     dialects=("cypher_cognodb", "cypher"),
+    # SHOW INDEXES came back accepted-but-empty while the constraint DDL
+    # reported success, so the catalogue alone cannot settle this. A unique
+    # constraint may be listed under constraints rather than indexes, and the
+    # backing index may not surface at all, so every spelling is tried.
     index_probes=(
         "SHOW INDEXES YIELD labelsOrTypes, properties RETURN labelsOrTypes, properties",
+        "SHOW CONSTRAINTS",
+        "SHOW INDEXES",
         "CALL db.indexes()",
+        "CALL db.constraints()",
     ),
+    await_statements=("CALL db.awaitIndexes(60)", "CALL db.awaitIndexes()"),
+    plan_probe="EXPLAIN MATCH (p:Paper {id: 1001}) RETURN p",
     tolerate_schema_errors=True,
 )
 
@@ -136,6 +163,55 @@ MATCH (a:Paper {id: row.f})
 MATCH (b:Paper {id: row.t})
 CREATE (a)-[:CITES]->(b)
 """.strip()
+
+
+#: Substrings that mean the transport died rather than the query being wrong.
+#: Matched against the whole exception chain, because the driver wraps the real
+#: cause - a reset, an EOF mid-message - inside a generic failure.
+_CONNECTION_LOSS_MARKERS = (
+    "defunct",
+    "connection reset",
+    "broken pipe",
+    "serviceunavailable",
+    "sessionexpired",
+    "connection closed",
+    "failed to read",
+    "no data",
+    "eof",
+)
+
+
+def _is_connection_loss(exc: BaseException) -> bool:
+    seen: set[int] = set()
+    current: BaseException | None = exc
+    while current is not None and id(current) not in seen:
+        seen.add(id(current))
+        text = f"{type(current).__name__}: {current}".lower()
+        if any(marker in text for marker in _CONNECTION_LOSS_MARKERS):
+            return True
+        current = current.__cause__ or current.__context__
+    return False
+
+
+def _plan_operators(plan: dict) -> list[str]:
+    """Every operator type in a query plan tree, flattened.
+
+    A label scan followed by a property filter means the lookup is not using an
+    index, however cheerfully the catalogue reports one.
+    """
+    found: list[str] = []
+    stack = [plan]
+    while stack:
+        node = stack.pop()
+        if not isinstance(node, dict):
+            continue
+        operator = node.get("operatorType") or node.get("operator_type")
+        if operator:
+            found.append(str(operator))
+        children = node.get("children") or node.get("args", {}).get("children") or []
+        if isinstance(children, list):
+            stack.extend(children)
+    return found
 
 
 class BoltAdapter(GraphAdapter):
@@ -271,29 +347,97 @@ class BoltAdapter(GraphAdapter):
                         ) from exc
 
     def schema_is_ready(self) -> bool | None:
+        """Confirm the Paper(id) index, by catalogue and then by query plan.
+
+        CognoDB reported `CREATE CONSTRAINT ... REQUIRE` as successful while
+        `SHOW INDEXES` returned zero rows. Both can be true: the constraint may
+        be listed under constraints rather than indexes, or its backing index
+        may not surface in the catalogue at all.
+
+        So the catalogue is asked in several spellings, and if that is
+        inconclusive the planner is asked directly whether a point lookup will
+        use an index. The plan is the better evidence: it tests the property
+        the benchmark actually depends on rather than the bookkeeping around
+        it, and it answers even when introspection does not exist.
+        """
         self.probe_attempts = []
-        rows: list[str] | None = None
+        self._await_indexes()
+
+        # Index creation is asynchronous on several engines, so a single
+        # immediate query can honestly return nothing. A couple of short
+        # retries costs nothing and removes a whole class of false negative.
+        for attempt in range(3):
+            found = self._probe_catalogue(record=attempt == 0)
+            if found is True:
+                return True
+            if attempt < 2:
+                time.sleep(1.0)
+
+        plan_result = self._probe_plan()
+        if plan_result is not None:
+            return plan_result
+        # Catalogue said no or could not answer, and the plan could not be
+        # read. "We could not tell" is the honest answer, and it keeps the
+        # read numbers marked non-comparable.
+        return None
+
+    def _await_indexes(self) -> None:
+        for statement in self.flavour.await_statements:
+            try:
+                with self._session() as session:
+                    session.run(statement).consume()
+                self.probe_attempts.append((statement, "ok"))
+                return
+            except Exception as exc:
+                self.probe_attempts.append((statement, f"{type(exc).__name__}: {exc}"))
+
+    def _probe_catalogue(self, record: bool) -> bool | None:
+        answered = False
         for probe in self.flavour.index_probes:
             try:
                 with self._session() as session:
-                    rows = [str(record.values()) for record in session.run(probe)]
-                self.probe_attempts.append((probe, f"ok, {len(rows)} row(s)"))
-                break
+                    rows = [str(row.values()) for row in session.run(probe)]
             except Exception as exc:
-                # This spelling was rejected; try the next. Only when every
-                # probe fails do we admit we cannot tell - and the reason each
-                # one failed is kept, because "we could not ask" and "we asked
-                # wrongly" need different fixes.
-                self.probe_attempts.append((probe, f"{type(exc).__name__}: {exc}"))
+                # This spelling was rejected; try the next. The reason is kept,
+                # because "we could not ask" and "we asked wrongly" need
+                # different fixes.
+                if record:
+                    self.probe_attempts.append((probe, f"{type(exc).__name__}: {exc}"))
                 continue
-        if rows is None:
-            # Not being able to ask is different from the answer being no.
+            answered = True
+            if record:
+                self.probe_attempts.append((probe, f"ok, {len(rows)} row(s)"))
+            # Every catalogue here puts the label and the property somewhere in
+            # the row, so matching on both together avoids depending on a
+            # column layout that differs between engines and versions.
+            if any("Paper" in row and "id" in row for row in rows):
+                return True
+        return False if answered else None
+
+    def _probe_plan(self) -> bool | None:
+        probe = self.flavour.plan_probe
+        if not probe:
             return None
-        # Both SHOW INDEXES (Neo4j) and SHOW INDEX INFO (Memgraph) return the
-        # label and property somewhere in the row; matching on both together
-        # avoids depending on a column layout that differs between them and
-        # has changed between versions of each.
-        return any("Paper" in row and "id" in row for row in rows)
+        try:
+            with self._session() as session:
+                plan = session.run(probe).consume().plan
+        except Exception as exc:
+            self.probe_attempts.append((probe, f"{type(exc).__name__}: {exc}"))
+            return None
+        if not plan:
+            self.probe_attempts.append((probe, "accepted but returned no plan"))
+            return None
+
+        operators = _plan_operators(plan)
+        indexed = any(
+            marker.lower() in operator.lower()
+            for operator in operators
+            for marker in self.flavour.plan_index_markers
+        )
+        self.probe_attempts.append(
+            (probe, f"plan operators {sorted(set(operators))} -> indexed={indexed}")
+        )
+        return indexed
 
     def diagnostics(self) -> dict[str, Any]:
         return {
@@ -363,6 +507,8 @@ class BoltAdapter(GraphAdapter):
                     rows += 1
                 return rows
         except Exception as exc:
+            if _is_connection_loss(exc):
+                raise ConnectionLost(f"{self.name}: {type(exc).__name__}: {exc}") from exc
             raise WorkloadFailure(f"{self.name}: {type(exc).__name__}: {exc}") from exc
 
 

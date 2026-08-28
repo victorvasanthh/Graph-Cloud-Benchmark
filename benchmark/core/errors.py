@@ -44,6 +44,21 @@ class QueryTimeout(WorkloadFailure):
     """
 
 
+class ConnectionLost(WorkloadFailure):
+    """The connection died while the query was running.
+
+    Distinct from a rejected query and distinct from a timeout. The engine
+    accepted the statement and then the transport went away - a server that
+    restarted, ran out of memory, or a proxy that closed an idle socket.
+
+    The distinction matters more than it looks. When one heavy workload kills
+    the connection, every workload after it fails too, and reading those as
+    "unsupported" would condemn queries that were never really attempted. A
+    ConnectionLost is a signal to wait for the engine to come back and retry,
+    not a verdict on the statement.
+    """
+
+
 class UnsupportedWorkload(WorkloadFailure):
     """This engine has no equivalent for the workload.
 

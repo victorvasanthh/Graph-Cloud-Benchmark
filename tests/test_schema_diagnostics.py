@@ -87,28 +87,37 @@ class TestSchemaAttemptsAreRecorded:
 
 
 class TestProbeAttemptsAreRecorded:
-    def test_successful_probe_is_recorded(self, monkeypatch):
+    def test_every_attempt_is_recorded(self, monkeypatch):
         target = adapter("cognodb")
         wire(monkeypatch, target)
         target.schema_is_ready()
-        assert len(target.probe_attempts) == 1
-        assert target.probe_attempts[0][1].startswith("ok")
+        statements = [stmt for stmt, _ in target.probe_attempts]
+        # The await statement and at least one catalogue probe.
+        assert any("awaitIndexes" in stmt for stmt in statements)
+        assert any("SHOW INDEXES" in stmt for stmt in statements)
 
-    def test_first_probe_rejected_second_tried(self, monkeypatch):
+    def test_rejected_probes_keep_their_reason(self, monkeypatch):
         target = adapter("cognodb")
         wire(monkeypatch, target, reject=("SHOW INDEXES",))
         target.schema_is_ready()
-        assert len(target.probe_attempts) == 2
-        assert target.probe_attempts[0][1] != "ok"
-        assert target.probe_attempts[1][1].startswith("ok")
+        rejected = [
+            (stmt, outcome) for stmt, outcome in target.probe_attempts if "SHOW INDEXES" in stmt
+        ]
+        assert rejected, "a rejected probe must still be reported"
+        assert all("syntax error" in outcome for _, outcome in rejected)
 
     def test_all_probes_rejected_yields_unknown_with_reasons(self, monkeypatch):
         target = adapter("cognodb")
-        wire(monkeypatch, target, reject=("SHOW INDEXES", "db.indexes"))
+        # Everything rejected, including the plan probe: nothing can answer.
+        wire(
+            monkeypatch,
+            target,
+            reject=("SHOW", "db.indexes", "db.constraints", "awaitIndexes", "EXPLAIN"),
+        )
         # "Could not ask" stays distinct from "asked, and it is missing".
         assert target.schema_is_ready() is None
-        assert len(target.probe_attempts) == 2
-        assert all(outcome != "ok" for _, outcome in target.probe_attempts)
+        assert target.probe_attempts
+        assert all(not outcome.startswith("ok") for _, outcome in target.probe_attempts)
 
 
 class TestDiagnosticsSurface:

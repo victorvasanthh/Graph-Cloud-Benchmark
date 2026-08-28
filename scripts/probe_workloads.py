@@ -37,6 +37,7 @@ sys.path.insert(0, str(REPO_ROOT))
 from benchmark.core.config import load_config  # noqa: E402
 from benchmark.databases import build_adapter  # noqa: E402
 from benchmark.datasets import load_cit_hepth  # noqa: E402
+from benchmark.runners.readiness import wait_for  # noqa: E402
 from benchmark.workloads.base import execution_params  # noqa: E402
 from benchmark.workloads.queries import ALL_WORKLOADS  # noqa: E402
 
@@ -95,6 +96,21 @@ def main() -> int:
     parser.add_argument("target")
     parser.add_argument("--workload", action="append", help="limit to these; repeatable")
     parser.add_argument("--timeout", type=float, default=120.0, help="0 disables")
+    parser.add_argument(
+        "--recover-timeout",
+        type=float,
+        default=180.0,
+        help=(
+            "wait up to this long for the engine to accept queries again before "
+            "each workload. Without it, one workload that kills the connection "
+            "makes every later workload look unsupported when it was never tried."
+        ),
+    )
+    parser.add_argument(
+        "--heaviest-last",
+        action="store_true",
+        help="run known-heavy workloads last, so a crash cannot mask the rest",
+    )
     parser.add_argument("--config-dir", type=Path, default=REPO_ROOT / "config")
     parser.add_argument("--data-dir", type=Path, default=REPO_ROOT / "data")
     args = parser.parse_args()
@@ -110,6 +126,11 @@ def main() -> int:
 
     graph = load_cit_hepth(data_dir=args.data_dir)
     chosen = [w for w in ALL_WORKLOADS if not args.workload or w.name in args.workload]
+    if args.heaviest_last:
+        # Ordering is not a fix, it is a way to get evidence about the others
+        # while the heavy one is still unexplained.
+        heavy = {"neighbourhood_3hop", "shortest_path", "top_cited"}
+        chosen.sort(key=lambda w: w.name in heavy)
     timeout_s = args.timeout if args.timeout > 0 else None
 
     print(f"probing {args.target}: {len(chosen)} workload(s), a fresh connection for each")
@@ -122,6 +143,19 @@ def main() -> int:
         params = workload.parameters_for(graph, {}, 1, config.run.seed)
         if not params:
             print(f"  {workload.name:<20} skipped: no parameters could be generated")
+            continue
+
+        # Wait for the engine to be answering again before each workload.
+        # A connection killed by the previous one is not evidence about this
+        # one, and treating it as such is how five workloads were written off
+        # without ever being attempted.
+        ready, detail = wait_for(target, args.recover_timeout, interval=5.0)
+        if not ready:
+            failures += 1
+            print(f"  {workload.name:<20} SKIP  engine still not answering")
+            print(f"      {detail}")
+            print("      not attempted - this is NOT evidence about this workload")
+            print()
             continue
 
         record = probe(target, workload, params[0], timeout_s)
