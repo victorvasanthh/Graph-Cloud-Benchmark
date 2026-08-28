@@ -166,8 +166,34 @@ def candidate_files(staged: bool) -> list[Path]:
         )
         return [REPO_ROOT / line for line in out.stdout.split() if (REPO_ROOT / line).is_file()]
 
+    # Files git would carry: tracked, plus untracked ones not covered by an
+    # ignore rule. Deliberately NOT a filesystem walk.
+    #
+    # A walk reports .env, which is the one file guaranteed to hold real
+    # credentials and the one file .gitignore exists to keep out. Failing the
+    # scan on it is a false positive that punishes the correct setup - and the
+    # obvious way to silence it, allowlisting .env, would disable the check
+    # that matters. Scanning what git would take keeps the guarantee ("no
+    # secret reaches the repository") without asserting something the tool has
+    # no business asserting ("no secret exists on this machine").
+    #
+    # check_git_tracking() still catches a `git add -f .env` that bypasses the
+    # ignore rule, so a deliberate override is not silently accepted.
+    listed = subprocess.run(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard"],
+        capture_output=True,
+        text=True,
+        cwd=REPO_ROOT,
+        check=False,
+    )
+    if listed.returncode == 0:
+        candidates = [REPO_ROOT / name for name in listed.stdout.split()]
+    else:
+        # Not a git checkout: fall back to a walk so the tool still works.
+        candidates = list(REPO_ROOT.rglob("*"))
+
     found: list[Path] = []
-    for path in REPO_ROOT.rglob("*"):
+    for path in candidates:
         if not path.is_file():
             continue
         if any(part in SKIP_DIRS for part in path.parts):

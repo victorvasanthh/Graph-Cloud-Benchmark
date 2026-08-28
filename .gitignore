@@ -25,6 +25,10 @@ results/summary/*smoke-*
 charts/*smoke-*
 docs/*smoke-*
 
+# ---- run logs: local diagnostics, never part of the record ----
+*.log
+nohup.out
+
 # ---- python ----
 __pycache__/
 *.py[cod]
