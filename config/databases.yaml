@@ -55,7 +55,14 @@ targets:
     required: [uri, password]
     settings:
       flavour: neo4j
-      database: neo4j
+      # Deliberately NOT pinned. Aura reported `neo4j` as nonexistent, and
+      # guessing a replacement name is the same mistake again. With no database
+      # set the driver connects to the account's home database - whatever the
+      # instance actually calls it - which is correct for every Aura tier and
+      # needs no knowledge we do not have.
+      #
+      # Self-hosted Neo4j keeps its explicit `neo4j` because there the name is
+      # ours and is known.
     resources:
       cpus: 1
       memory_gb: 1

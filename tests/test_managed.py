@@ -58,11 +58,17 @@ class TestManagedTargetsAreDeclared:
         for value in targets[name]["env"].values():
             assert value.isupper(), f"{value} looks like a value, not a variable name"
 
-    def test_aura_pins_the_database_name(self, targets):
-        # Aura serves a single database called neo4j and rejects a connection
-        # that asks for another. Self-hosted Neo4j defaults to the same name,
-        # so pinning it costs nothing and removes a failure mode.
-        assert targets["aura-free"]["settings"]["database"] == "neo4j"
+    def test_aura_does_not_pin_a_database_name(self, targets):
+        # It used to pin `neo4j`, and the live instance rejected that as
+        # nonexistent. Guessing a replacement would be the same mistake; with
+        # nothing set the driver uses the account's home database, which is
+        # right on every Aura tier and needs no knowledge we do not have.
+        assert "database" not in targets["aura-free"]["settings"]
+
+    def test_self_hosted_neo4j_still_pins_its_database(self, targets):
+        # There the name is ours and is known, so pinning removes a failure
+        # mode rather than adding one.
+        assert targets["neo4j-selfhosted"]["settings"]["database"] == "neo4j"
 
     def test_both_are_marked_managed_free(self, targets):
         for name in MANAGED:

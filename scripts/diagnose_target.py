@@ -136,8 +136,14 @@ def check_driver(target) -> bool:
             driver.verify_connectivity()
             line(OK, "driver", "verify_connectivity succeeded")
             with driver.session() as session:
-                value = session.run("RETURN 1 AS ok").single()[0]
-            line(OK, "query", f"RETURN 1 -> {value}")
+                result = session.run("RETURN 1 AS ok")
+                value = result.single()[0]
+                # Name the database actually used. Aura rejected a pinned
+                # `neo4j`, so the useful fact is which home database the
+                # server chose - confirmed rather than assumed.
+                summary = result.consume()
+                database = getattr(summary, "database", None) or "(server default)"
+            line(OK, "query", f"RETURN 1 -> {value}  [database: {database}]")
             return True
         finally:
             driver.close()
