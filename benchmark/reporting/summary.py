@@ -165,5 +165,8 @@ def _verdict(results: BenchmarkResults, issues: list[Any]) -> str:
 def write_summary(summary: dict[str, Any], directory: Path, run_id: str) -> Path:
     directory.mkdir(parents=True, exist_ok=True)
     path = directory / f"{run_id}.json"
-    path.write_text(json.dumps(summary, indent=2, sort_keys=True), encoding="utf-8")
+    # newline="" for the same reason as the report: text mode on Windows would
+    # write CRLF into a tracked file that .gitattributes requires to be LF.
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        handle.write(json.dumps(summary, indent=2, sort_keys=True))
     return path

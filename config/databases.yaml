@@ -120,6 +120,17 @@ targets:
     required: [host]
     settings:
       graph: benchmark
+    # Recorded here because the harness cannot observe it. The full run reached
+    # FalkorDB and was measuring it when the Codespace restarted; the process
+    # died before any result file was written. A later merge filtered by
+    # --target then labelled it "disabled in configuration", which is true of
+    # that invocation and false about this engine.
+    absence_note: >-
+      Not disabled. A 100-iteration run was in progress when the Codespace
+      restarted and the process was killed before writing a result file. The
+      earlier smoke run reached it successfully, so this is an interrupted
+      measurement rather than an engine that could not be benchmarked. Nothing
+      in this report says whether it would have been faster or slower.
     resources:
       cpus: 1
       memory_gb: 2

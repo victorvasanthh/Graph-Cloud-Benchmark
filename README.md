@@ -136,6 +136,84 @@ summing overlapping per-request latencies.
 It does **not** measure durability, replication, failover, or behaviour at
 scale beyond this dataset.
 
+## Results
+
+Full report: **[docs/report-merged-20260828T103536Z.md](docs/report-merged-20260828T103536Z.md)**
+Raw per-iteration timings: `results/raw/final-combined.json`
+
+100 measured iterations after 5 warmup, seed 20260827, one target at a time,
+each container capped at 1 vCPU / 2 GB. Every engine below loaded the same
+27,770 nodes and 352,768 edges with counts verified by the server and the
+`Paper(id)` index confirmed.
+
+**Median latency, milliseconds (lower is better)**
+
+| workload | Memgraph | ArangoDB | Neo4j (local) | Aura Free |
+|---|---|---|---|---|
+| point_lookup | **0.81** | 1.48 | 3.31 | 64.92 |
+| one_hop | 3.52 | **2.96** | 11.24 | 67.68 |
+| two_hop | **23.24** | 32.96 | 37.36 | 151.35 |
+| neighbourhood_3hop | 374.00 | 183.04 | **40.44** | 94.95 |
+| shortest_path | 84.99 | **2.20** | 2.82 | 65.59 |
+| top_cited | 151.04 | **95.42** | 124.16 | 263.12 |
+| date_filtered_top | **14.60** | 16.89 | 18.15 | 80.40 |
+| mixed_read_write | **1.22** | 1.79 | 2.34 | 65.46 |
+| bulk load | **7.0 s** | 7.7 s | 28.6 s | 32.7 s |
+
+### What the numbers show
+
+**The largest single effect is not a database at all.** Aura Free and the
+self-hosted Neo4j container run the same engine, yet the point lookup differs
+by roughly twenty times - 64.92 ms against 3.31 ms. Aura's floor sits near
+65 ms on every cheap workload, which is the shape of a network round trip
+rather than of query execution: the four cheapest workloads all land within a
+few milliseconds of each other on Aura while spanning 0.81-3.52 ms locally.
+That gap is why Aura is in this benchmark at all. **Read every
+managed-versus-container comparison through it**, or a slow network path will
+be mistaken for a slow database.
+
+**In-memory storage shows up exactly where you would expect it, and not
+elsewhere.** Memgraph wins the small, latency-bound workloads - point lookup,
+the mixed read/write, date-filtered - and loads the dataset four times faster
+than Neo4j (7.0 s against 28.6 s). But it is the *slowest* on the three-hop
+neighbourhood at 374 ms against Neo4j's 40.44 ms. Being memory-resident helps
+when the work is dominated by per-operation overhead; it does not help when
+the work is dominated by how many paths the planner enumerates.
+
+**`neighbourhood_3hop` is the one row not to quote on its own.** It is marked
+`loose` equivalence in the report because the engines are allowed to reach the
+same answer by different means: ArangoDB prunes with `uniqueVertices: 'global'`
+while the Cypher engines enumerate paths and deduplicate. Neo4j leading here
+measures planner strategy as much as traversal speed.
+
+**ArangoDB is the most consistent performer and the hardest to interpret.** It
+is fastest or near-fastest on six of eight workloads and comfortably wins
+shortest path (2.20 ms against Memgraph's 84.99 ms). It is also the only
+non-Cypher engine, so every one of its queries is a hand-written AQL
+translation. Its rows carry translation risk the Cypher rows do not, and that
+is a caveat about this benchmark rather than a hedge about the engine.
+
+**Concurrency behaves as a saturation curve, not a speedup.** On point lookup,
+Memgraph goes 967 → 1,285 → 943 requests/second across 1, 10 and 40 clients
+while its p50 rises 0.81 → 5.59 → 7.80 ms: throughput peaks around ten clients
+and then falls as latency grows. Aura moves the other way - 15 → 153 → 371
+requests/second with p50 almost flat - because its cost is round-trip latency,
+which parallelism hides. A single capped vCPU is the ceiling in one case and
+the network is the ceiling in the other.
+
+### What these numbers do not support
+
+They describe four engines on one 27,770-node graph, at one size, under one set
+of caps, from one client, on one day. They do not establish that any engine is
+faster in general. **FalkorDB is absent** - its run was interrupted by a
+Codespace restart, not excluded - and **CognoDB Cloud was never reachable**
+because authentication failed. Both are disclosed in the report's Limitations
+section, and neither absence implies anything about those engines.
+
+The report's own Limitations and Conclusion sections are generated from the run
+record rather than written by hand, so they cannot drift from the data they
+describe.
+
 ## Layout
 
 ```

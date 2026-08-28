@@ -28,6 +28,7 @@ from benchmark.reporting.tables import (  # noqa: E402
     render_conclusion,
     render_concurrency_table,
     render_footnotes,
+    render_footprint,
     render_ingest_table,
     render_latency_table,
     render_limitations,
@@ -97,6 +98,7 @@ def build_markdown(summary: dict, chart_paths: list[Path]) -> str:
     # Limitations before the conclusion, and both before the run conditions.
     # A reader who stops early should meet the caveats before the numbers have
     # had time to harden into an opinion.
+    sections += [render_footprint(summary), ""]
     sections += [render_limitations(summary), ""]
     sections += [render_conclusion(summary), ""]
     sections += [render_footnotes(summary), ""]
@@ -176,7 +178,11 @@ def main() -> int:
 
     markdown = build_markdown(summary, doc_relative)
     report_path = args.docs_dir / f"report-{results.manifest.run_id}.md"
-    report_path.write_text(markdown, encoding="utf-8")
+    # newline="" so Python does not translate line endings on Windows. The
+    # report is a tracked file and .gitattributes requires LF; text mode would
+    # write CRLF and fail the line-ending gate on every regeneration.
+    with report_path.open("w", encoding="utf-8", newline="") as handle:
+        handle.write(markdown)
 
     _echo(markdown)
     print(f"\nreport -> {report_path}", file=sys.stderr)

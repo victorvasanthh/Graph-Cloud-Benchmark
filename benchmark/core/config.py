@@ -57,6 +57,11 @@ class TargetConfig:
     enabled: bool = True
     resources: dict[str, Any] = field(default_factory=dict)
     missing: list[str] = field(default_factory=list)
+    #: Why this target has no results, when the reason is not something the
+    #: harness can observe. A run filtered with --target reports every other
+    #: target as "disabled in configuration", which is true of that invocation
+    #: and false about the target; this is where the real reason is recorded.
+    absence_note: str = ""
 
     @property
     def available(self) -> bool:
@@ -165,6 +170,7 @@ def _resolve_target(raw: dict[str, Any], environ: dict[str, str]) -> TargetConfi
         enabled=bool(raw.get("enabled", True)),
         resources=raw.get("resources", {}) or {},
         missing=missing,
+        absence_note=str(raw.get("absence_note", "") or ""),
     )
 
 

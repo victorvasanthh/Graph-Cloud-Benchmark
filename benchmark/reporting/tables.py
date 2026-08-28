@@ -202,7 +202,7 @@ def render_ingest_table(summary: dict[str, Any], table_format: str = "github") -
         if record.get("status") != "ok":
             reason = STATUS_LABEL.get(record.get("status", ""), record.get("status", "?"))
             note = (record.get("note") or "")[:70]
-            rows.append([target, "-", "-", "-", "-", f"{reason} - {note}" if note else reason])
+            rows.append([target, "-", "-", "-", "-", "-", f"{reason} - {note}" if note else reason])
             continue
         index = record.get("index_verified")
         index_text = {True: "yes", False: "NO", None: "unknown"}.get(index, "unknown")
@@ -210,6 +210,7 @@ def render_ingest_table(summary: dict[str, Any], table_format: str = "github") -
             [
                 target,
                 f"{record['p50_ms'] / 1000:,.1f}",
+                f"{record.get('nodes_per_second', 0):,.0f}",
                 f"{record.get('edges_per_second', 0):,.0f}",
                 f"{record.get('nodes_loaded', 0):,} / {record.get('edges_loaded', 0):,}",
                 index_text,
@@ -217,7 +218,15 @@ def render_ingest_table(summary: dict[str, Any], table_format: str = "github") -
             ]
         )
 
-    headers = ["target", "load s", "edges/s", "nodes / edges held", "indexed", "status"]
+    headers = [
+        "target",
+        "load s",
+        "nodes/s",
+        "edges/s",
+        "nodes / edges held",
+        "indexed",
+        "status",
+    ]
     table = tabulate(rows, headers=headers, tablefmt=table_format, disable_numparse=True)
     return "\n".join(
         [
@@ -236,12 +245,12 @@ def render_ingest_table(summary: dict[str, Any], table_format: str = "github") -
     )
 
 
-def _configured_targets() -> list[str]:
+def _configured_targets() -> list[Any]:
     """Every target declared in config, whether or not it produced results."""
     try:
         from ..core.config import load_config
 
-        return [t.name for t in load_config().targets]
+        return list(load_config().targets)
     except Exception:
         # Reporting must not fail because config is unreadable from wherever
         # this is being rendered.
@@ -281,7 +290,13 @@ def render_limitations(summary: dict[str, Any]) -> str:
                 timed_out.setdefault(target, []).append(name)
             elif status in {"failed", "unsupported"}:
                 failed.setdefault(target, []).append(name)
-            if any(c.startswith("p99") for c in record.get("caveats", ())):
+            # `ingest` is one timed load, not a sampled workload: it has n=1 by
+            # construction and so always carries a percentile caveat. Harvesting
+            # that produced a Limitations line claiming p99 was unresolvable for
+            # every engine, directly contradicted by the tables above showing
+            # n=100 and distinct p99 values. A caveat that is false is worse
+            # than no caveat at all.
+            if name != "ingest" and any(c.startswith("p99") for c in record.get("caveats", ())):
                 unresolved_p99.add(target)
 
         ingest = workloads.get("ingest", {}).get("targets", {}).get(target, {})
@@ -299,17 +314,23 @@ def render_limitations(summary: dict[str, Any]) -> str:
     # and an absent row reads as "not part of the comparison" when the truth is
     # "we failed to measure it". Naming it here is the only place that can be
     # said, because there is no row to carry the caveat.
-    absent = [name for name in _configured_targets() if name not in targets]
+    absent = [t for t in _configured_targets() if t.name not in targets]
     if absent:
         lines += [
-            f"**No results at all: {', '.join(absent)}.** These targets are configured "
-            "but produced no usable result file, so they appear in no table above. "
-            "Their absence is a gap in this benchmark, not a judgement about them: "
-            "nothing here says whether they would have been faster or slower. Any "
-            "comparison drawn from this report covers only the targets that "
-            "actually ran.",
+            f"**No results at all: {', '.join(t.name for t in absent)}.** These targets "
+            "are configured but produced no usable result file, so they appear in "
+            "no table above. Their absence is a gap in this benchmark, not a "
+            "judgement about them: nothing here says whether they would have been "
+            "faster or slower. Any comparison drawn from this report covers only "
+            "the targets that actually ran.",
             "",
         ]
+        # The manifest may say "disabled in configuration" for these, which is
+        # true of a --target-filtered invocation and false about the target. The
+        # declared reason is the accurate one.
+        for target in absent:
+            if target.absence_note:
+                lines += [f"- **{target.name}**: {target.absence_note}", ""]
 
     if unavailable:
         lines += [
@@ -437,3 +458,77 @@ def render_conclusion(summary: dict[str, Any]) -> str:
         "",
     ]
     return "\n".join(lines)
+
+
+def render_footprint(summary: dict[str, Any], table_format: str = "github") -> str:
+    """Resource limits per target, and what each platform will not disclose.
+
+    Two very different kinds of row sit here, and conflating them would be the
+    dishonest option. A container's caps are *enforced* by this repository and
+    verified from inside the container by scripts/probe_limits.py. A managed
+    tier's allocation is whatever the vendor advertises: it cannot be inspected
+    from outside, so it is reported as the claim it is.
+
+    Runtime footprint - resident memory, disk on ingest - is deliberately shown
+    as not observable rather than estimated. The harness is a client; it can see
+    what it was told and what it can measure through a query, and inventing a
+    number for the rest would be worth less than the honest gap.
+    """
+    targets = sorted({t for entry in summary["workloads"].values() for t in entry["targets"]})
+    try:
+        from ..core.config import load_config
+
+        configured = {t.name: t for t in load_config().targets}
+    except Exception:
+        configured = {}
+
+    rows: list[list[str]] = []
+    for name in targets:
+        target = configured.get(name)
+        if target is None:
+            rows.append([name, "-", "-", "unknown", "not observable"])
+            continue
+        resources = target.resources or {}
+        cpus = str(resources.get("cpus", "-"))
+        memory = f"{resources.get('memory_gb', '-')} GB"
+        if target.tier == "self-hosted-capped":
+            enforcement = "enforced by this repo (`make probe` verifies)"
+        else:
+            enforcement = "vendor-advertised, not verifiable from outside"
+        rows.append([name, cpus, memory, enforcement, "not observable"])
+
+    table = tabulate(
+        rows,
+        headers=["target", "vCPU", "memory", "limit is", "runtime footprint"],
+        tablefmt=table_format,
+        disable_numparse=True,
+    )
+    return "\n".join(
+        [
+            "## Resources and footprint",
+            "",
+            table,
+            "",
+            "**`runtime footprint` is `not observable` for every target, and that is a "
+            "statement about this harness rather than about the engines.** The "
+            "benchmark is a client: it can report the limits it applied and the "
+            "counts a server will tell it, but resident memory and on-disk size "
+            "are visible only from inside the host. For the containers those "
+            "figures could be obtained with `docker stats`; for the managed tiers "
+            "they cannot be obtained at all. Rather than publish one column "
+            "measured and another estimated, neither is claimed.",
+            "",
+            "The self-hosted caps are applied by `infra/docker-compose.yml` and "
+            "confirmed inside the container by `scripts/probe_limits.py`, which "
+            "reads the cgroup files directly - a nested Docker daemon can accept "
+            "`--memory` and silently ignore it, and a parity claim resting on an "
+            "unapplied cap would be worthless.",
+            "",
+            "The managed tiers are the vendor's to define. Their figures are "
+            "recorded as advertised and are **not** independently verified, which "
+            "is the main reason a managed-versus-container latency gap should be "
+            "read through the Aura-versus-self-hosted-Neo4j anchor rather than "
+            "taken at face value.",
+            "",
+        ]
+    )
