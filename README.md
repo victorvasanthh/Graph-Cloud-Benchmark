@@ -1,26 +1,39 @@
 # Graph-Cloud-Benchmark
 
 A reproducible, resource-parity benchmark harness for graph databases, built
-around the SNAP cit-HepTh citation network (27,770 nodes, 352,807 edges).
+around the SNAP cit-HepTh citation network.
 
-**Default scope: four self-hosted engines** — **Neo4j**, **Memgraph**,
-**FalkorDB** and **ArangoDB** — each in a container capped at 1 vCPU and 2 GB,
-measured one at a time. This is the tightest comparison the harness can make:
-every target sits behind the same loopback path under identical caps, so the
-network confound that dogs managed-vs-local benchmarks is absent by
-construction.
+**Dataset:** 27,770 nodes. The source file contains **352,807** edges; **39 are
+self-loops** and are dropped at parse time, so every platform is loaded with
+**352,768 edges**. The count is verified against the server after each load.
 
-The harness also supports two managed targets — **CognoDB Cloud** and **Neo4j
-AuraDB Free**, the latter as a calibration anchor rather than a competitor.
-Both are optional and are reported as *not configured* when their credentials
-are absent. Adding either reintroduces the internet round trip, which is why
-the anchor exists; see [`docs/methodology.md`](docs/methodology.md) §4.
+## What was actually measured
 
-> **This repository contains a harness, not results.** Numbers appear only
-> after you run it against instances you control. Nothing here ships
-> pre-computed measurements, and none should ever be added by hand — the
-> report is generated from `results/raw/` and can be recomputed by anyone
-> holding that file.
+**Four targets completed the full 100-iteration benchmark** and are the only
+ones in the comparison tables:
+
+| Target | Status |
+|---|---|
+| **Memgraph** (container) | complete — all 8 workloads |
+| **ArangoDB** (container) | complete — all 8 workloads |
+| **Neo4j 5** (container, self-hosted) | complete — all 8 workloads |
+| **Neo4j AuraDB Free** (managed) | complete — all 8 workloads |
+
+**Two targets did not produce a comparable result, and neither is in any
+results table:**
+
+| Target | What happened |
+|---|---|
+| **FalkorDB** (container) | **Not benchmarked.** A 100-iteration run was in progress when the Codespace restarted; the process was killed before writing any result file. An earlier smoke run reached it successfully, so this is an *interrupted measurement*, not an engine that could not be benchmarked. No FalkorDB timing appears anywhere in this repository. |
+| **CognoDB Cloud** (managed) | **Unavailable.** Authentication failed against the instance, so every workload is recorded as `not reachable`. Earlier diagnostic runs also showed connection loss on heavy workloads and an index that could not be confirmed. No CognoDB timing is published. |
+
+Nothing in this report says whether FalkorDB or CognoDB would have been faster
+or slower. Their absence is a gap in this benchmark, not a finding about them.
+
+> **Results are generated, never hand-written.** Every number below is derived
+> from `results/raw/final-combined.json` by `scripts/make_report.py`, and the
+> report's Limitations and Conclusion sections are generated from that same
+> record so they cannot drift from the data they describe.
 
 **Everything containerised runs in GitHub Codespaces.** The devcontainer is the
 supported environment; no Docker installation on a local machine is expected or
