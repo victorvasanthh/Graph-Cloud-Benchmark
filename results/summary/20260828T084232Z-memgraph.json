@@ -1,0 +1,761 @@
+{
+  "baseline": "memgraph",
+  "consistency_issues": [],
+  "consistency_verdict": "only one target produced results, so no cross-engine check was possible",
+  "manifest": {
+    "dataset": "cit-HepTh",
+    "dataset_edges": 352768,
+    "dataset_nodes": 27770,
+    "finished_at": "2026-08-28T08:46:36+00:00",
+    "measured_iterations": 100,
+    "notes": [
+      "cognodb-cloud skipped (disabled in configuration)",
+      "aura-free skipped (not configured: AURA_URI, AURA_PASSWORD unset)",
+      "neo4j-selfhosted skipped (disabled in configuration)",
+      "falkordb skipped (disabled in configuration)",
+      "arangodb skipped (disabled in configuration)",
+      "memgraph server version: 3.12.0"
+    ],
+    "platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.36",
+    "processor": "x86_64",
+    "python_version": "3.12.11",
+    "run_id": "20260828T084232Z-memgraph",
+    "schema_version": 1,
+    "seed": 20260827,
+    "started_at": "2026-08-28T08:45:03+00:00",
+    "warmup_iterations": 5
+  },
+  "workloads": {
+    "date_filtered_top": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 33.65858,
+              "mean_ms": 16.42251466,
+              "min_ms": 12.335059,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 14.602944,
+              "p90_ms": 21.499168,
+              "p95_ms": 25.831367,
+              "p99_ms": 33.330788,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 4.472652232667357,
+              "throughput_qps": 60.80025093285004,
+              "wall_s": 1.644730054
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Most-cited papers published within a given year.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Filter on an ISO date string, then count incoming citations. Only about 41% of nodes carry a publication date in the source data, so this workload deliberately touches a minority of the graph; the absolute row counts are small by construction, not by accident.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 33.65858,
+          "mean_ms": 16.42251466,
+          "min_ms": 12.335059,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 14.602944,
+          "p90_ms": 21.499168,
+          "p95_ms": 25.831367,
+          "p99_ms": 33.330788,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 4.472652232667357,
+          "throughput_qps": 60.80025093285004,
+          "wall_s": 1.644730054
+        }
+      }
+    },
+    "ingest": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "batches": 77,
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "edges_expected": 352768,
+              "edges_loaded": 352768,
+              "edges_per_second": 50451.72497017397,
+              "failures": 0,
+              "index_verified": true,
+              "max_ms": 6992.189072,
+              "mean_ms": 6992.189072,
+              "min_ms": 6992.189072,
+              "n": 1,
+              "nodes_expected": 27770,
+              "nodes_loaded": 27770,
+              "nodes_per_second": 3971.5745260957096,
+              "p50_ms": 6992.189072,
+              "p90_ms": 6992.189072,
+              "p95_ms": 6992.189072,
+              "p99_ms": 6992.189072,
+              "relative_p50": 1.0,
+              "rows_returned": 352768,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 0.14301672762318002,
+              "wall_s": 6.992189072
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "",
+      "equivalence": "n/a",
+      "equivalence_note": "",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "batches": 77,
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "edges_expected": 352768,
+          "edges_loaded": 352768,
+          "edges_per_second": 50451.72497017397,
+          "failures": 0,
+          "index_verified": true,
+          "max_ms": 6992.189072,
+          "mean_ms": 6992.189072,
+          "min_ms": 6992.189072,
+          "n": 1,
+          "nodes_expected": 27770,
+          "nodes_loaded": 27770,
+          "nodes_per_second": 3971.5745260957096,
+          "p50_ms": 6992.189072,
+          "p90_ms": 6992.189072,
+          "p95_ms": 6992.189072,
+          "p99_ms": 6992.189072,
+          "relative_p50": 1.0,
+          "rows_returned": 352768,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 0.14301672762318002,
+          "wall_s": 6.992189072
+        }
+      }
+    },
+    "mixed_read_write": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 6.849267,
+              "mean_ms": 1.42655545,
+              "min_ms": 0.776359,
+              "mutates": true,
+              "n": 100,
+              "p50_ms": 1.222131,
+              "p90_ms": 2.10844,
+              "p95_ms": 2.393716,
+              "p99_ms": 4.029904,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.7602701238274683,
+              "throughput_qps": 694.4980172498306,
+              "wall_s": 0.143988892
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 19.839681,
+              "mean_ms": 7.53584588,
+              "min_ms": 1.174272,
+              "mutates": true,
+              "n": 100,
+              "p50_ms": 7.06464,
+              "p90_ms": 12.637694,
+              "p95_ms": 15.228922,
+              "p99_ms": 17.864342,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 3.8240443718099453,
+              "throughput_qps": 1113.7253090300949,
+              "wall_s": 0.089788747
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 55.375608,
+              "mean_ms": 15.244873779999999,
+              "min_ms": 1.851257,
+              "mutates": true,
+              "n": 100,
+              "p50_ms": 11.434799,
+              "p90_ms": 31.773798,
+              "p95_ms": 38.699231,
+              "p99_ms": 52.89958,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 12.275326402152777,
+              "throughput_qps": 734.0675016469172,
+              "wall_s": 0.136227254
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Read-heavy mix: one-hop expansion with interleaved counter updates.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "The read is the one_hop expansion; the write increments a counter property on a single paper. The write deliberately touches only a property and never the graph structure, so it cannot change what any other workload measures. Read and write positions in the sequence are fixed by the seed and identical on every engine.",
+      "mutates": true,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 6.849267,
+          "mean_ms": 1.42655545,
+          "min_ms": 0.776359,
+          "mutates": true,
+          "n": 100,
+          "p50_ms": 1.222131,
+          "p90_ms": 2.10844,
+          "p95_ms": 2.393716,
+          "p99_ms": 4.029904,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 0.7602701238274683,
+          "throughput_qps": 694.4980172498306,
+          "wall_s": 0.143988892
+        }
+      }
+    },
+    "neighbourhood_3hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "loose",
+              "failures": 0,
+              "max_ms": 1228.427385,
+              "mean_ms": 420.47581634,
+              "min_ms": 12.765704,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 374.002708,
+              "p90_ms": 731.586771,
+              "p95_ms": 843.122364,
+              "p99_ms": 1090.90463,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 213.77231627250202,
+              "throughput_qps": 2.3781171173058007,
+              "wall_s": 42.050073679
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Size of the undirected three-hop neighbourhood of a paper.",
+      "equivalence": "loose",
+      "equivalence_note": "The two engines are asked for the same number and allowed to reach it differently. Cypher enumerates paths and deduplicates with count(DISTINCT ...); AQL uses uniqueVertices:'global', which prunes during the walk. That is a genuine difference in work done, so this row compares engine-plus-optimiser rather than raw traversal speed, and it is the one workload here whose ratio should not be quoted on its own.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "loose",
+          "failures": 0,
+          "max_ms": 1228.427385,
+          "mean_ms": 420.47581634,
+          "min_ms": 12.765704,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 374.002708,
+          "p90_ms": 731.586771,
+          "p95_ms": 843.122364,
+          "p99_ms": 1090.90463,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 213.77231627250202,
+          "throughput_qps": 2.3781171173058007,
+          "wall_s": 42.050073679
+        }
+      }
+    },
+    "one_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 7.96474,
+              "mean_ms": 3.88945052,
+              "min_ms": 2.712063,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 3.52443,
+              "p90_ms": 5.382692,
+              "p95_ms": 6.113874,
+              "p99_ms": 6.640167,
+              "relative_p50": 1.0,
+              "rows_returned": 93,
+              "status": "ok",
+              "stdev_ms": 1.0965682914249877,
+              "throughput_qps": 256.071138119082,
+              "wall_s": 0.390516482
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 186.279955,
+              "mean_ms": 78.26305648,
+              "min_ms": 13.539999,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 71.849202,
+              "p90_ms": 142.451332,
+              "p95_ms": 164.888284,
+              "p99_ms": 180.159868,
+              "relative_p50": 1.0,
+              "rows_returned": 90,
+              "status": "ok",
+              "stdev_ms": 42.4217453405088,
+              "throughput_qps": 120.37072865161511,
+              "wall_s": 0.830766758
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 619.996918,
+              "mean_ms": 274.44287277999996,
+              "min_ms": 28.835655,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 263.142707,
+              "p90_ms": 435.077995,
+              "p95_ms": 469.566531,
+              "p99_ms": 519.61277,
+              "relative_p50": 1.0,
+              "rows_returned": 93,
+              "status": "ok",
+              "stdev_ms": 121.141039426301,
+              "throughput_qps": 111.20047267584599,
+              "wall_s": 0.899276753
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Papers directly cited by a given paper.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A single OUTBOUND edge step in both dialects.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 7.96474,
+          "mean_ms": 3.88945052,
+          "min_ms": 2.712063,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 3.52443,
+          "p90_ms": 5.382692,
+          "p95_ms": 6.113874,
+          "p99_ms": 6.640167,
+          "relative_p50": 1.0,
+          "rows_returned": 93,
+          "status": "ok",
+          "stdev_ms": 1.0965682914249877,
+          "throughput_qps": 256.071138119082,
+          "wall_s": 0.390516482
+        }
+      }
+    },
+    "point_lookup": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 4.704393,
+              "mean_ms": 1.02209861,
+              "min_ms": 0.68542,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 0.812166,
+              "p90_ms": 1.055541,
+              "p95_ms": 2.7208,
+              "p99_ms": 4.055499,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 0.6796717975463576,
+              "throughput_qps": 966.5396350067975,
+              "wall_s": 0.103461872
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 16.866317,
+              "mean_ms": 6.45203838,
+              "min_ms": 1.110293,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 5.590507,
+              "p90_ms": 11.873278,
+              "p95_ms": 13.065193,
+              "p99_ms": 15.984984,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 3.498289936047648,
+              "throughput_qps": 1284.9262386165333,
+              "wall_s": 0.077825479
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 26.688156,
+              "mean_ms": 9.38758779,
+              "min_ms": 0.934568,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 7.797618,
+              "p90_ms": 18.884955,
+              "p95_ms": 20.59284,
+              "p99_ms": 22.672392,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 5.684516222122851,
+              "throughput_qps": 943.3163382003016,
+              "wall_s": 0.106008977
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Fetch a single paper by id.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher resolves the unique constraint on :Paper(id); AQL resolves the primary index via DOCUMENT(). Both are the engine's fastest single-key access path, which is the property being held equal.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 4.704393,
+          "mean_ms": 1.02209861,
+          "min_ms": 0.68542,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 0.812166,
+          "p90_ms": 1.055541,
+          "p95_ms": 2.7208,
+          "p99_ms": 4.055499,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 0.6796717975463576,
+          "throughput_qps": 966.5396350067975,
+          "wall_s": 0.103461872
+        }
+      }
+    },
+    "shortest_path": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 143.420574,
+              "mean_ms": 89.63983045,
+              "min_ms": 78.347931,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 84.986909,
+              "p90_ms": 104.546938,
+              "p95_ms": 111.662282,
+              "p99_ms": 141.731219,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 12.410813039225536,
+              "throughput_qps": 11.1525651262918,
+              "wall_s": 8.966547056
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Hop count of the shortest undirected path between two papers.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Both sides run the engine's built-in shortest-path operator and return a single row holding the hop count. Pairs are pre-validated as reachable, so no engine is credited for failing fast on a disconnected pair.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 143.420574,
+          "mean_ms": 89.63983045,
+          "min_ms": 78.347931,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 84.986909,
+          "p90_ms": 104.546938,
+          "p95_ms": 111.662282,
+          "p99_ms": 141.731219,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 12.410813039225536,
+          "throughput_qps": 11.1525651262918,
+          "wall_s": 8.966547056
+        }
+      }
+    },
+    "top_cited": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 250.686147,
+              "mean_ms": 159.84395195,
+              "min_ms": 140.282011,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 151.040804,
+              "p90_ms": 184.555745,
+              "p95_ms": 212.471558,
+              "p99_ms": 235.681975,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 21.99419046262959,
+              "throughput_qps": 6.255167430172226,
+              "wall_s": 15.986782307
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "The most-cited papers in the corpus, by in-degree.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A full scan and grouping of every edge in both dialects. This is the workload least sensitive to modelling choices and the most sensitive to how much memory the tier allows.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 250.686147,
+          "mean_ms": 159.84395195,
+          "min_ms": 140.282011,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 151.040804,
+          "p90_ms": 184.555745,
+          "p95_ms": 212.471558,
+          "p99_ms": 235.681975,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 21.99419046262959,
+          "throughput_qps": 6.255167430172226,
+          "wall_s": 15.986782307
+        }
+      }
+    },
+    "two_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "memgraph": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 101.250453,
+              "mean_ms": 26.631232559999997,
+              "min_ms": 7.895841,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 23.243876,
+              "p90_ms": 39.606184,
+              "p95_ms": 54.875641,
+              "p99_ms": 63.178453,
+              "relative_p50": 1.0,
+              "rows_returned": 1312,
+              "status": "ok",
+              "stdev_ms": 13.312586107192017,
+              "throughput_qps": 37.52146491381362,
+              "wall_s": 2.665141146
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Distinct papers exactly two citation hops downstream.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher variable-length patterns are relationship-isomorphic, so no edge repeats within a path. The AQL traversal is pinned to uniqueEdges:'path' to match that exactly rather than relying on the default, which has changed between ArangoDB versions.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "memgraph": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 101.250453,
+          "mean_ms": 26.631232559999997,
+          "min_ms": 7.895841,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 23.243876,
+          "p90_ms": 39.606184,
+          "p95_ms": 54.875641,
+          "p99_ms": 63.178453,
+          "relative_p50": 1.0,
+          "rows_returned": 1312,
+          "status": "ok",
+          "stdev_ms": 13.312586107192017,
+          "throughput_qps": 37.52146491381362,
+          "wall_s": 2.665141146
+        }
+      }
+    }
+  }
+}

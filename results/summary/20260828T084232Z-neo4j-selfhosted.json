@@ -1,0 +1,761 @@
+{
+  "baseline": "neo4j-selfhosted",
+  "consistency_issues": [],
+  "consistency_verdict": "only one target produced results, so no cross-engine check was possible",
+  "manifest": {
+    "dataset": "cit-HepTh",
+    "dataset_edges": 352768,
+    "dataset_nodes": 27770,
+    "finished_at": "2026-08-28T08:44:42+00:00",
+    "measured_iterations": 100,
+    "notes": [
+      "cognodb-cloud skipped (disabled in configuration)",
+      "aura-free skipped (not configured: AURA_URI, AURA_PASSWORD unset)",
+      "memgraph skipped (disabled in configuration)",
+      "falkordb skipped (disabled in configuration)",
+      "arangodb skipped (disabled in configuration)",
+      "neo4j-selfhosted server version: Neo4j Kernel 5.26.30 (community)"
+    ],
+    "platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.36",
+    "processor": "x86_64",
+    "python_version": "3.12.11",
+    "run_id": "20260828T084232Z-neo4j-selfhosted",
+    "schema_version": 1,
+    "seed": 20260827,
+    "started_at": "2026-08-28T08:43:27+00:00",
+    "warmup_iterations": 5
+  },
+  "workloads": {
+    "date_filtered_top": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 140.180635,
+              "mean_ms": 29.51844595,
+              "min_ms": 12.413168,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 18.147101,
+              "p90_ms": 75.977358,
+              "p95_ms": 89.349314,
+              "p99_ms": 109.681925,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 26.512993673999443,
+              "throughput_qps": 33.85435158989086,
+              "wall_s": 2.953830019
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Most-cited papers published within a given year.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Filter on an ISO date string, then count incoming citations. Only about 41% of nodes carry a publication date in the source data, so this workload deliberately touches a minority of the graph; the absolute row counts are small by construction, not by accident.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 140.180635,
+          "mean_ms": 29.51844595,
+          "min_ms": 12.413168,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 18.147101,
+          "p90_ms": 75.977358,
+          "p95_ms": 89.349314,
+          "p99_ms": 109.681925,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 26.512993673999443,
+          "throughput_qps": 33.85435158989086,
+          "wall_s": 2.953830019
+        }
+      }
+    },
+    "ingest": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "batches": 77,
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "edges_expected": 352768,
+              "edges_loaded": 352768,
+              "edges_per_second": 12328.90359307227,
+              "failures": 0,
+              "index_verified": true,
+              "max_ms": 28613.08772,
+              "mean_ms": 28613.08772,
+              "min_ms": 28613.08772,
+              "n": 1,
+              "nodes_expected": 27770,
+              "nodes_loaded": 27770,
+              "nodes_per_second": 970.5348919959206,
+              "p50_ms": 28613.08772,
+              "p90_ms": 28613.08772,
+              "p95_ms": 28613.08772,
+              "p99_ms": 28613.08772,
+              "relative_p50": 1.0,
+              "rows_returned": 352768,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 0.03494904184356934,
+              "wall_s": 28.61308772
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "",
+      "equivalence": "n/a",
+      "equivalence_note": "",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "batches": 77,
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "edges_expected": 352768,
+          "edges_loaded": 352768,
+          "edges_per_second": 12328.90359307227,
+          "failures": 0,
+          "index_verified": true,
+          "max_ms": 28613.08772,
+          "mean_ms": 28613.08772,
+          "min_ms": 28613.08772,
+          "n": 1,
+          "nodes_expected": 27770,
+          "nodes_loaded": 27770,
+          "nodes_per_second": 970.5348919959206,
+          "p50_ms": 28613.08772,
+          "p90_ms": 28613.08772,
+          "p95_ms": 28613.08772,
+          "p99_ms": 28613.08772,
+          "relative_p50": 1.0,
+          "rows_returned": 352768,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 0.03494904184356934,
+          "wall_s": 28.61308772
+        }
+      }
+    },
+    "mixed_read_write": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 242.558864,
+              "mean_ms": 5.182927009999999,
+              "min_ms": 1.282384,
+              "mutates": true,
+              "n": 100,
+              "p50_ms": 2.339488,
+              "p90_ms": 3.947029,
+              "p95_ms": 6.810465,
+              "p99_ms": 10.340846,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 24.028669942630327,
+              "throughput_qps": 191.9480330030304,
+              "wall_s": 0.520974341
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 35.170041,
+              "mean_ms": 15.76447701,
+              "min_ms": 3.007876,
+              "mutates": true,
+              "n": 100,
+              "p50_ms": 14.431935,
+              "p90_ms": 29.595274,
+              "p95_ms": 33.035687,
+              "p99_ms": 34.5265,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 8.418037186872922,
+              "throughput_qps": 577.6808842616753,
+              "wall_s": 0.173105953
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 111.654671,
+              "mean_ms": 32.33056939,
+              "min_ms": 6.500867,
+              "mutates": true,
+              "n": 100,
+              "p50_ms": 22.552058,
+              "p90_ms": 75.836746,
+              "p95_ms": 90.558164,
+              "p99_ms": 105.31814,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 26.155868776928568,
+              "throughput_qps": 439.188575215431,
+              "wall_s": 0.227692626
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Read-heavy mix: one-hop expansion with interleaved counter updates.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "The read is the one_hop expansion; the write increments a counter property on a single paper. The write deliberately touches only a property and never the graph structure, so it cannot change what any other workload measures. Read and write positions in the sequence are fixed by the seed and identical on every engine.",
+      "mutates": true,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 242.558864,
+          "mean_ms": 5.182927009999999,
+          "min_ms": 1.282384,
+          "mutates": true,
+          "n": 100,
+          "p50_ms": 2.339488,
+          "p90_ms": 3.947029,
+          "p95_ms": 6.810465,
+          "p99_ms": 10.340846,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 24.028669942630327,
+          "throughput_qps": 191.9480330030304,
+          "wall_s": 0.520974341
+        }
+      }
+    },
+    "neighbourhood_3hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "loose",
+              "failures": 0,
+              "max_ms": 253.222904,
+              "mean_ms": 49.30168155,
+              "min_ms": 4.762459,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 40.43907,
+              "p90_ms": 63.709445,
+              "p95_ms": 103.478843,
+              "p99_ms": 242.776099,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 38.96735674969913,
+              "throughput_qps": 20.273582733967583,
+              "wall_s": 4.932527285
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Size of the undirected three-hop neighbourhood of a paper.",
+      "equivalence": "loose",
+      "equivalence_note": "The two engines are asked for the same number and allowed to reach it differently. Cypher enumerates paths and deduplicates with count(DISTINCT ...); AQL uses uniqueVertices:'global', which prunes during the walk. That is a genuine difference in work done, so this row compares engine-plus-optimiser rather than raw traversal speed, and it is the one workload here whose ratio should not be quoted on its own.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "loose",
+          "failures": 0,
+          "max_ms": 253.222904,
+          "mean_ms": 49.30168155,
+          "min_ms": 4.762459,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 40.43907,
+          "p90_ms": 63.709445,
+          "p95_ms": 103.478843,
+          "p99_ms": 242.776099,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 38.96735674969913,
+          "throughput_qps": 20.273582733967583,
+          "wall_s": 4.932527285
+        }
+      }
+    },
+    "one_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 47.238163,
+              "mean_ms": 15.11145014,
+              "min_ms": 6.001925,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 11.235397,
+              "p90_ms": 34.722156,
+              "p95_ms": 40.12909,
+              "p99_ms": 47.057315,
+              "relative_p50": 1.0,
+              "rows_returned": 93,
+              "status": "ok",
+              "stdev_ms": 10.155335860920772,
+              "throughput_qps": 66.08945209852935,
+              "wall_s": 1.513100757
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 235.027643,
+              "mean_ms": 88.24055317,
+              "min_ms": 13.754289,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 76.910531,
+              "p90_ms": 158.734083,
+              "p95_ms": 169.274262,
+              "p99_ms": 199.850839,
+              "relative_p50": 1.0,
+              "rows_returned": 90,
+              "status": "ok",
+              "stdev_ms": 46.92371327806191,
+              "throughput_qps": 108.14182930250651,
+              "wall_s": 0.924711563
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 975.029055,
+              "mean_ms": 391.84269288,
+              "min_ms": 33.307836,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 330.043603,
+              "p90_ms": 736.837311,
+              "p95_ms": 796.876043,
+              "p99_ms": 904.236817,
+              "relative_p50": 1.0,
+              "rows_returned": 93,
+              "status": "ok",
+              "stdev_ms": 244.6799245489043,
+              "throughput_qps": 83.7506693395369,
+              "wall_s": 1.194020308
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Papers directly cited by a given paper.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A single OUTBOUND edge step in both dialects.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 47.238163,
+          "mean_ms": 15.11145014,
+          "min_ms": 6.001925,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 11.235397,
+          "p90_ms": 34.722156,
+          "p95_ms": 40.12909,
+          "p99_ms": 47.057315,
+          "relative_p50": 1.0,
+          "rows_returned": 93,
+          "status": "ok",
+          "stdev_ms": 10.155335860920772,
+          "throughput_qps": 66.08945209852935,
+          "wall_s": 1.513100757
+        }
+      }
+    },
+    "point_lookup": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 49.648764,
+              "mean_ms": 6.17894527,
+              "min_ms": 2.296377,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 3.311673,
+              "p90_ms": 7.314897,
+              "p95_ms": 34.610694,
+              "p99_ms": 44.627649,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 8.728362050237742,
+              "throughput_qps": 161.4191175928054,
+              "wall_s": 0.619505307
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 65.303861,
+              "mean_ms": 30.00747449,
+              "min_ms": 6.908368,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 26.967155,
+              "p90_ms": 52.973247,
+              "p95_ms": 57.561877,
+              "p99_ms": 64.82455,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 14.892230281639451,
+              "throughput_qps": 311.70010350563,
+              "wall_s": 0.320821196
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 158.19803,
+              "mean_ms": 96.09987220999999,
+              "min_ms": 6.997574,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 85.308683,
+              "p90_ms": 152.16521,
+              "p95_ms": 154.254471,
+              "p99_ms": 157.634331,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 39.26996156687638,
+              "throughput_qps": 358.26919792214613,
+              "wall_s": 0.279119725
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Fetch a single paper by id.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher resolves the unique constraint on :Paper(id); AQL resolves the primary index via DOCUMENT(). Both are the engine's fastest single-key access path, which is the property being held equal.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 49.648764,
+          "mean_ms": 6.17894527,
+          "min_ms": 2.296377,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 3.311673,
+          "p90_ms": 7.314897,
+          "p95_ms": 34.610694,
+          "p99_ms": 44.627649,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 8.728362050237742,
+          "throughput_qps": 161.4191175928054,
+          "wall_s": 0.619505307
+        }
+      }
+    },
+    "shortest_path": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 49.328466,
+              "mean_ms": 4.97816258,
+              "min_ms": 2.026724,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 2.820415,
+              "p90_ms": 5.869018,
+              "p95_ms": 8.888514,
+              "p99_ms": 37.256687,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 7.298443499163926,
+              "throughput_qps": 200.23981641517037,
+              "wall_s": 0.499401177
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Hop count of the shortest undirected path between two papers.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Both sides run the engine's built-in shortest-path operator and return a single row holding the hop count. Pairs are pre-validated as reachable, so no engine is credited for failing fast on a disconnected pair.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 49.328466,
+          "mean_ms": 4.97816258,
+          "min_ms": 2.026724,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 2.820415,
+          "p90_ms": 5.869018,
+          "p95_ms": 8.888514,
+          "p99_ms": 37.256687,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 7.298443499163926,
+          "throughput_qps": 200.23981641517037,
+          "wall_s": 0.499401177
+        }
+      }
+    },
+    "top_cited": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 336.862853,
+              "mean_ms": 136.45645916,
+              "min_ms": 116.500598,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 124.160055,
+              "p90_ms": 163.901564,
+              "p95_ms": 190.930264,
+              "p99_ms": 268.675313,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 34.394808189021404,
+              "throughput_qps": 7.327109972319761,
+              "wall_s": 13.647945831
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "The most-cited papers in the corpus, by in-degree.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A full scan and grouping of every edge in both dialects. This is the workload least sensitive to modelling choices and the most sensitive to how much memory the tier allows.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 336.862853,
+          "mean_ms": 136.45645916,
+          "min_ms": 116.500598,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 124.160055,
+          "p90_ms": 163.901564,
+          "p95_ms": 190.930264,
+          "p99_ms": 268.675313,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 34.394808189021404,
+          "throughput_qps": 7.327109972319761,
+          "wall_s": 13.647945831
+        }
+      }
+    },
+    "two_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "neo4j-selfhosted": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 106.045115,
+              "mean_ms": 41.58697867,
+              "min_ms": 12.399109,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 37.362145,
+              "p90_ms": 70.069786,
+              "p95_ms": 82.349194,
+              "p99_ms": 97.485745,
+              "relative_p50": 1.0,
+              "rows_returned": 1312,
+              "status": "ok",
+              "stdev_ms": 19.847111290397184,
+              "throughput_qps": 24.021516997122294,
+              "wall_s": 4.162934423
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Distinct papers exactly two citation hops downstream.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher variable-length patterns are relationship-isomorphic, so no edge repeats within a path. The AQL traversal is pinned to uniqueEdges:'path' to match that exactly rather than relying on the default, which has changed between ArangoDB versions.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "neo4j-selfhosted": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 106.045115,
+          "mean_ms": 41.58697867,
+          "min_ms": 12.399109,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 37.362145,
+          "p90_ms": 70.069786,
+          "p95_ms": 82.349194,
+          "p99_ms": 97.485745,
+          "relative_p50": 1.0,
+          "rows_returned": 1312,
+          "status": "ok",
+          "stdev_ms": 19.847111290397184,
+          "throughput_qps": 24.021516997122294,
+          "wall_s": 4.162934423
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,882 @@
+{
+  "baseline": "aura-free",
+  "consistency_issues": [],
+  "consistency_verdict": "only one target produced results, so no cross-engine check was possible",
+  "manifest": {
+    "dataset": "cit-HepTh",
+    "dataset_edges": 352768,
+    "dataset_nodes": 27770,
+    "finished_at": "2026-08-28T10:42:21+00:00",
+    "measured_iterations": 100,
+    "notes": [
+      "merged from 1 run(s) measured sequentially, not simultaneously: 20260828T103736Z-managed (2026-08-28T10:38:38+00:00)",
+      "neo4j-selfhosted skipped (disabled in configuration)",
+      "memgraph skipped (disabled in configuration)",
+      "falkordb skipped (disabled in configuration)",
+      "arangodb skipped (disabled in configuration)",
+      "cognodb-cloud unavailable: cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+      "aura-free server version: Neo4j Kernel 5.27-aura (enterprise)"
+    ],
+    "platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.36",
+    "processor": "x86_64",
+    "python_version": "3.12.11",
+    "run_id": "merged-20260828T103736Z-managed",
+    "schema_version": 1,
+    "seed": 20260827,
+    "started_at": "2026-08-28T10:38:38+00:00",
+    "warmup_iterations": 5
+  },
+  "workloads": {
+    "date_filtered_top": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 108.11105,
+              "mean_ms": 81.29348439,
+              "min_ms": 75.095698,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 80.404883,
+              "p90_ms": 86.021012,
+              "p95_ms": 90.764913,
+              "p99_ms": 96.021428,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 5.009402199286022,
+              "throughput_qps": 12.298543007561104,
+              "wall_s": 8.131044461
+            },
+            "cognodb-cloud": {
+              "concurrency": 1,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Most-cited papers published within a given year.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Filter on an ISO date string, then count incoming citations. Only about 41% of nodes carry a publication date in the source data, so this workload deliberately touches a minority of the graph; the absolute row counts are small by construction, not by accident.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "aura-free": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 108.11105,
+          "mean_ms": 81.29348439,
+          "min_ms": 75.095698,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 80.404883,
+          "p90_ms": 86.021012,
+          "p95_ms": 90.764913,
+          "p99_ms": 96.021428,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 5.009402199286022,
+          "throughput_qps": 12.298543007561104,
+          "wall_s": 8.131044461
+        },
+        "cognodb-cloud": {
+          "concurrency": 1,
+          "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+          "status": "unavailable"
+        }
+      }
+    },
+    "ingest": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "batches": 77,
+              "caveats": [
+                "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+                "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+                "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+              ],
+              "concurrency": 1,
+              "edges_expected": 352768,
+              "edges_loaded": 352768,
+              "edges_per_second": 10784.666322010517,
+              "failures": 0,
+              "index_verified": true,
+              "max_ms": 32710.145077,
+              "mean_ms": 32710.145077,
+              "min_ms": 32710.145077,
+              "n": 1,
+              "nodes_expected": 27770,
+              "nodes_loaded": 27770,
+              "nodes_per_second": 848.9720829616973,
+              "p50_ms": 32710.145077,
+              "p90_ms": 32710.145077,
+              "p95_ms": 32710.145077,
+              "p99_ms": 32710.145077,
+              "relative_p50": 1.0,
+              "rows_returned": 352768,
+              "status": "ok",
+              "stdev_ms": 0.0,
+              "throughput_qps": 0.030571555022027273,
+              "wall_s": 32.710145077
+            },
+            "cognodb-cloud": {
+              "concurrency": 1,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "",
+      "equivalence": "n/a",
+      "equivalence_note": "",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "aura-free": {
+          "batches": 77,
+          "caveats": [
+            "p99 equals the maximum at n=1; 100 or more samples are needed for it to be distinct",
+            "p95 equals the maximum at n=1; 20 or more samples are needed for it to be distinct",
+            "p90 equals the maximum at n=1; 10 or more samples are needed for it to be distinct"
+          ],
+          "concurrency": 1,
+          "edges_expected": 352768,
+          "edges_loaded": 352768,
+          "edges_per_second": 10784.666322010517,
+          "failures": 0,
+          "index_verified": true,
+          "max_ms": 32710.145077,
+          "mean_ms": 32710.145077,
+          "min_ms": 32710.145077,
+          "n": 1,
+          "nodes_expected": 27770,
+          "nodes_loaded": 27770,
+          "nodes_per_second": 848.9720829616973,
+          "p50_ms": 32710.145077,
+          "p90_ms": 32710.145077,
+          "p95_ms": 32710.145077,
+          "p99_ms": 32710.145077,
+          "relative_p50": 1.0,
+          "rows_returned": 352768,
+          "status": "ok",
+          "stdev_ms": 0.0,
+          "throughput_qps": 0.030571555022027273,
+          "wall_s": 32.710145077
+        },
+        "cognodb-cloud": {
+          "concurrency": 1,
+          "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+          "status": "unavailable"
+        }
+      }
+    },
+    "mixed_read_write": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 142.319492,
+              "mean_ms": 67.14962648999999,
+              "min_ms": 64.787023,
+              "mutates": true,
+              "n": 100,
+              "p50_ms": 65.462886,
+              "p90_ms": 68.946432,
+              "p95_ms": 70.456823,
+              "p99_ms": 94.012127,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 8.255934600493568,
+              "throughput_qps": 14.88769193274968,
+              "wall_s": 6.716957904
+            },
+            "cognodb-cloud": {
+              "concurrency": 1,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 202.535779,
+              "mean_ms": 72.28478365000001,
+              "min_ms": 57.082463,
+              "mutates": true,
+              "n": 100,
+              "p50_ms": 61.518599,
+              "p90_ms": 70.892937,
+              "p95_ms": 160.065905,
+              "p99_ms": 196.683015,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 32.800938537167355,
+              "throughput_qps": 126.73279822335621,
+              "wall_s": 0.789061722
+            },
+            "cognodb-cloud": {
+              "concurrency": 10,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 150.403392,
+              "mean_ms": 75.59211773999999,
+              "min_ms": 57.110737,
+              "mutates": true,
+              "n": 100,
+              "p50_ms": 63.664397,
+              "p90_ms": 126.831012,
+              "p95_ms": 136.242191,
+              "p99_ms": 143.676328,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 26.988327055936423,
+              "throughput_qps": 346.017448338133,
+              "wall_s": 0.289002767
+            },
+            "cognodb-cloud": {
+              "concurrency": 40,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Read-heavy mix: one-hop expansion with interleaved counter updates.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "The read is the one_hop expansion; the write increments a counter property on a single paper. The write deliberately touches only a property and never the graph structure, so it cannot change what any other workload measures. Read and write positions in the sequence are fixed by the seed and identical on every engine.",
+      "mutates": true,
+      "row_counts_agree": true,
+      "targets": {
+        "aura-free": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 142.319492,
+          "mean_ms": 67.14962648999999,
+          "min_ms": 64.787023,
+          "mutates": true,
+          "n": 100,
+          "p50_ms": 65.462886,
+          "p90_ms": 68.946432,
+          "p95_ms": 70.456823,
+          "p99_ms": 94.012127,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 8.255934600493568,
+          "throughput_qps": 14.88769193274968,
+          "wall_s": 6.716957904
+        },
+        "cognodb-cloud": {
+          "concurrency": 1,
+          "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+          "status": "unavailable"
+        }
+      }
+    },
+    "neighbourhood_3hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "loose",
+              "failures": 0,
+              "max_ms": 168.424279,
+              "mean_ms": 96.64742627,
+              "min_ms": 67.042216,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 94.94513,
+              "p90_ms": 107.352193,
+              "p95_ms": 110.206945,
+              "p99_ms": 134.480361,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 12.081828138176197,
+              "throughput_qps": 10.344830325446623,
+              "wall_s": 9.666664107
+            },
+            "cognodb-cloud": {
+              "concurrency": 1,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Size of the undirected three-hop neighbourhood of a paper.",
+      "equivalence": "loose",
+      "equivalence_note": "The two engines are asked for the same number and allowed to reach it differently. Cypher enumerates paths and deduplicates with count(DISTINCT ...); AQL uses uniqueVertices:'global', which prunes during the walk. That is a genuine difference in work done, so this row compares engine-plus-optimiser rather than raw traversal speed, and it is the one workload here whose ratio should not be quoted on its own.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "aura-free": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "loose",
+          "failures": 0,
+          "max_ms": 168.424279,
+          "mean_ms": 96.64742627,
+          "min_ms": 67.042216,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 94.94513,
+          "p90_ms": 107.352193,
+          "p95_ms": 110.206945,
+          "p99_ms": 134.480361,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 12.081828138176197,
+          "throughput_qps": 10.344830325446623,
+          "wall_s": 9.666664107
+        },
+        "cognodb-cloud": {
+          "concurrency": 1,
+          "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+          "status": "unavailable"
+        }
+      }
+    },
+    "one_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 77.510126,
+              "mean_ms": 68.14867922,
+              "min_ms": 66.324275,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 67.684766,
+              "p90_ms": 70.313906,
+              "p95_ms": 70.792379,
+              "p99_ms": 73.79202,
+              "relative_p50": 1.0,
+              "rows_returned": 93,
+              "status": "ok",
+              "stdev_ms": 1.6293624587889024,
+              "throughput_qps": 14.669213153468062,
+              "wall_s": 6.816998223
+            },
+            "cognodb-cloud": {
+              "concurrency": 1,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 199.595189,
+              "mean_ms": 86.17789218,
+              "min_ms": 59.748666,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 69.160101,
+              "p90_ms": 149.891383,
+              "p95_ms": 172.686791,
+              "p99_ms": 198.348208,
+              "relative_p50": 1.0,
+              "rows_returned": 90,
+              "status": "ok",
+              "stdev_ms": 36.96857622977907,
+              "throughput_qps": 109.13117238217245,
+              "wall_s": 0.916328468
+            },
+            "cognodb-cloud": {
+              "concurrency": 10,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 637.372696,
+              "mean_ms": 278.6466274,
+              "min_ms": 60.298791,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 232.309929,
+              "p90_ms": 544.854551,
+              "p95_ms": 598.356167,
+              "p99_ms": 620.408725,
+              "relative_p50": 1.0,
+              "rows_returned": 93,
+              "status": "ok",
+              "stdev_ms": 163.8423950813966,
+              "throughput_qps": 114.52448763338985,
+              "wall_s": 0.873175703
+            },
+            "cognodb-cloud": {
+              "concurrency": 40,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Papers directly cited by a given paper.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A single OUTBOUND edge step in both dialects.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "aura-free": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 77.510126,
+          "mean_ms": 68.14867922,
+          "min_ms": 66.324275,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 67.684766,
+          "p90_ms": 70.313906,
+          "p95_ms": 70.792379,
+          "p99_ms": 73.79202,
+          "relative_p50": 1.0,
+          "rows_returned": 93,
+          "status": "ok",
+          "stdev_ms": 1.6293624587889024,
+          "throughput_qps": 14.669213153468062,
+          "wall_s": 6.816998223
+        },
+        "cognodb-cloud": {
+          "concurrency": 1,
+          "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+          "status": "unavailable"
+        }
+      }
+    },
+    "point_lookup": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 136.925037,
+              "mean_ms": 65.82929587,
+              "min_ms": 64.423745,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 64.915591,
+              "p90_ms": 65.84674,
+              "p95_ms": 66.758365,
+              "p99_ms": 69.867783,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 7.217134688064048,
+              "throughput_qps": 15.186932001965957,
+              "wall_s": 6.584608398
+            },
+            "cognodb-cloud": {
+              "concurrency": 1,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        },
+        "10": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 10,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 65.973429,
+              "mean_ms": 61.0295761,
+              "min_ms": 56.915532,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 60.262283,
+              "p90_ms": 64.399189,
+              "p95_ms": 64.843519,
+              "p99_ms": 65.677907,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 2.5146117803810712,
+              "throughput_qps": 152.99370469918557,
+              "wall_s": 0.653621665
+            },
+            "cognodb-cloud": {
+              "concurrency": 10,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        },
+        "40": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 40,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 139.766584,
+              "mean_ms": 72.62566215000001,
+              "min_ms": 56.34585,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 60.202582,
+              "p90_ms": 126.754601,
+              "p95_ms": 133.273917,
+              "p99_ms": 139.20878,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 26.78209682197206,
+              "throughput_qps": 370.68882089887524,
+              "wall_s": 0.269768049
+            },
+            "cognodb-cloud": {
+              "concurrency": 40,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1,
+        10,
+        40
+      ],
+      "description": "Fetch a single paper by id.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher resolves the unique constraint on :Paper(id); AQL resolves the primary index via DOCUMENT(). Both are the engine's fastest single-key access path, which is the property being held equal.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "aura-free": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 136.925037,
+          "mean_ms": 65.82929587,
+          "min_ms": 64.423745,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 64.915591,
+          "p90_ms": 65.84674,
+          "p95_ms": 66.758365,
+          "p99_ms": 69.867783,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 7.217134688064048,
+          "throughput_qps": 15.186932001965957,
+          "wall_s": 6.584608398
+        },
+        "cognodb-cloud": {
+          "concurrency": 1,
+          "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+          "status": "unavailable"
+        }
+      }
+    },
+    "shortest_path": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 129.720729,
+              "mean_ms": 66.4658131,
+              "min_ms": 64.779119,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 65.592498,
+              "p90_ms": 66.553282,
+              "p95_ms": 66.943732,
+              "p99_ms": 73.350948,
+              "relative_p50": 1.0,
+              "rows_returned": 1,
+              "status": "ok",
+              "stdev_ms": 6.46490571133673,
+              "throughput_qps": 15.041710684033132,
+              "wall_s": 6.648179991
+            },
+            "cognodb-cloud": {
+              "concurrency": 1,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Hop count of the shortest undirected path between two papers.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Both sides run the engine's built-in shortest-path operator and return a single row holding the hop count. Pairs are pre-validated as reachable, so no engine is credited for failing fast on a disconnected pair.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "aura-free": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 129.720729,
+          "mean_ms": 66.4658131,
+          "min_ms": 64.779119,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 65.592498,
+          "p90_ms": 66.553282,
+          "p95_ms": 66.943732,
+          "p99_ms": 73.350948,
+          "relative_p50": 1.0,
+          "rows_returned": 1,
+          "status": "ok",
+          "stdev_ms": 6.46490571133673,
+          "throughput_qps": 15.041710684033132,
+          "wall_s": 6.648179991
+        },
+        "cognodb-cloud": {
+          "concurrency": 1,
+          "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+          "status": "unavailable"
+        }
+      }
+    },
+    "top_cited": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 571.58666,
+              "mean_ms": 267.90378934,
+              "min_ms": 229.381115,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 263.124712,
+              "p90_ms": 297.944217,
+              "p95_ms": 315.379849,
+              "p99_ms": 341.479796,
+              "relative_p50": 1.0,
+              "rows_returned": 25,
+              "status": "ok",
+              "stdev_ms": 38.88177370159591,
+              "throughput_qps": 3.732197784748063,
+              "wall_s": 26.793864036
+            },
+            "cognodb-cloud": {
+              "concurrency": 1,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "The most-cited papers in the corpus, by in-degree.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "A full scan and grouping of every edge in both dialects. This is the workload least sensitive to modelling choices and the most sensitive to how much memory the tier allows.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "aura-free": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 571.58666,
+          "mean_ms": 267.90378934,
+          "min_ms": 229.381115,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 263.124712,
+          "p90_ms": 297.944217,
+          "p95_ms": 315.379849,
+          "p99_ms": 341.479796,
+          "relative_p50": 1.0,
+          "rows_returned": 25,
+          "status": "ok",
+          "stdev_ms": 38.88177370159591,
+          "throughput_qps": 3.732197784748063,
+          "wall_s": 26.793864036
+        },
+        "cognodb-cloud": {
+          "concurrency": 1,
+          "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+          "status": "unavailable"
+        }
+      }
+    },
+    "two_hop": {
+      "by_concurrency": {
+        "1": {
+          "row_counts_agree": true,
+          "targets": {
+            "aura-free": {
+              "caveats": [],
+              "concurrency": 1,
+              "equivalence": "idiomatic",
+              "failures": 0,
+              "max_ms": 253.575904,
+              "mean_ms": 133.89518545,
+              "min_ms": 74.704015,
+              "mutates": false,
+              "n": 100,
+              "p50_ms": 151.348896,
+              "p90_ms": 173.381317,
+              "p95_ms": 184.607955,
+              "p99_ms": 246.562919,
+              "relative_p50": 1.0,
+              "rows_returned": 1312,
+              "status": "ok",
+              "stdev_ms": 45.92729588759609,
+              "throughput_qps": 7.46749259691658,
+              "wall_s": 13.391375847
+            },
+            "cognodb-cloud": {
+              "concurrency": 1,
+              "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+              "status": "unavailable"
+            }
+          }
+        }
+      },
+      "concurrency_levels": [
+        1
+      ],
+      "description": "Distinct papers exactly two citation hops downstream.",
+      "equivalence": "idiomatic",
+      "equivalence_note": "Cypher variable-length patterns are relationship-isomorphic, so no edge repeats within a path. The AQL traversal is pinned to uniqueEdges:'path' to match that exactly rather than relying on the default, which has changed between ArangoDB versions.",
+      "mutates": false,
+      "row_counts_agree": true,
+      "targets": {
+        "aura-free": {
+          "caveats": [],
+          "concurrency": 1,
+          "equivalence": "idiomatic",
+          "failures": 0,
+          "max_ms": 253.575904,
+          "mean_ms": 133.89518545,
+          "min_ms": 74.704015,
+          "mutates": false,
+          "n": 100,
+          "p50_ms": 151.348896,
+          "p90_ms": 173.381317,
+          "p95_ms": 184.607955,
+          "p99_ms": 246.562919,
+          "relative_p50": 1.0,
+          "rows_returned": 1312,
+          "status": "ok",
+          "stdev_ms": 45.92729588759609,
+          "throughput_qps": 7.46749259691658,
+          "wall_s": 13.391375847
+        },
+        "cognodb-cloud": {
+          "concurrency": 1,
+          "note": "cognodb-cloud: could not connect to bolt+s://<cognodb-endpoint-redacted>: {code: Neo.ClientError.Security.Unauthorized} {message: The client is unauthorized due to authentication failure.}",
+          "status": "unavailable"
+        }
+      }
+    }
+  }
+}
