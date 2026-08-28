@@ -39,6 +39,46 @@ or slower. Their absence is a gap in this benchmark, not a finding about them.
 supported environment; no Docker installation on a local machine is expected or
 required.
 
+## ⚠️ Deviation from the assignment brief
+
+**The resource-parity requirement was not matched.** This is the most
+significant weakness in this submission and it is stated here rather than left
+for a reader to find.
+
+| | Brief's reference tier | What this benchmark used |
+|---|---|---|
+| vCPU | 0.5 (burstable) | **1.0** |
+| RAM | 256 MB | **2 GB** |
+| Disk | 1 GB | not capped |
+
+The brief specifies the CognoDB free tier as *burstable 0.5 vCPU, 256 MB RAM,
+1 GB disk* and asks that every platform be run on equivalent resources. The
+containers here were capped at 1 vCPU and 2 GB — roughly **twice the CPU and
+eight times the memory** — and Neo4j AuraDB Free is a vendor-defined tier that
+is not 256 MB either.
+
+**What this costs.** Absolute cross-platform numbers are not a fair
+free-tier-versus-free-tier comparison, and the brief is explicit that comparing
+databases on unequal resources is a methodology error. The in-memory engines
+(Memgraph) benefit most from the extra headroom, since 256 MB would force very
+different behaviour on a 352,768-edge graph than 2 GB does.
+
+**What still holds.** The four measured targets were capped **identically to
+each other**, ran the same dataset with the same seeded parameters in the same
+order, one at a time, with indexes verified on every platform. Comparisons
+*among those four* remain internally consistent; what cannot be claimed is that
+those figures represent behaviour at the brief's reference tier.
+
+**Why it happened, plainly:** the caps were chosen early from the tier figures
+recorded in `config/databases.yaml`, which were written as an assumption before
+the brief's exact numbers were applied, and the parity assumption was never
+revisited before the runs. Re-running at 0.5 vCPU / 256 MB is the correct fix
+and was not possible within the remaining time.
+
+The caps are enforced and verified rather than merely claimed — `make probe`
+reads the cgroup limits from inside each container, because a nested Docker
+daemon can accept `--memory` and silently ignore it.
+
 ## Why another graph benchmark
 
 Most published graph benchmarks are unreproducible, unfairly configured, or

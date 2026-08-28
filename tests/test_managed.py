@@ -90,7 +90,7 @@ class TestUnconfiguredMeansSkipped:
 
     def test_a_configured_managed_target_becomes_active(self):
         environ = {
-            "AURA_URI": "neo4j+s://abc123.databases.neo4j.io",
+            "AURA_URI": "neo4j+s://example-instance.databases.neo4j.io",
             "AURA_PASSWORD": "not-a-real-password",
         }
         config = load_config(REPO_ROOT / "config", environ=environ)
