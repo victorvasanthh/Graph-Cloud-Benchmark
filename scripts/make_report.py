@@ -25,10 +25,12 @@ from benchmark.core.results import BenchmarkResults  # noqa: E402
 from benchmark.reporting.consistency import summarise_issues  # noqa: E402
 from benchmark.reporting.summary import build_summary, write_summary  # noqa: E402
 from benchmark.reporting.tables import (  # noqa: E402
+    render_conclusion,
     render_concurrency_table,
     render_footnotes,
     render_ingest_table,
     render_latency_table,
+    render_limitations,
     render_status_table,
 )
 
@@ -92,6 +94,11 @@ def build_markdown(summary: dict, chart_paths: list[Path]) -> str:
         sections += [f"- {line}" for line in summarise_issues(restored)]
         sections += [""]
 
+    # Limitations before the conclusion, and both before the run conditions.
+    # A reader who stops early should meet the caveats before the numbers have
+    # had time to harden into an opinion.
+    sections += [render_limitations(summary), ""]
+    sections += [render_conclusion(summary), ""]
     sections += [render_footnotes(summary), ""]
     return "\n".join(sections)
 

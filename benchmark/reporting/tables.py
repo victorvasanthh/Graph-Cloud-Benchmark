@@ -234,3 +234,178 @@ def render_ingest_table(summary: dict[str, Any], table_format: str = "github") -
             table,
         ]
     )
+
+
+def render_limitations(summary: dict[str, Any]) -> str:
+    """What this run does not support, derived from the run itself.
+
+    Written from the summary rather than by hand, on purpose. A limitations
+    section composed from memory drifts away from the data it describes, and
+    the drift always runs in the flattering direction. Every statement below is
+    generated from what the manifest and the per-target records actually say,
+    so it cannot claim a target was measured when it was not.
+    """
+    workloads = summary["workloads"]
+    targets = sorted({t for entry in workloads.values() for t in entry["targets"]})
+
+    unavailable: list[str] = []
+    unverified_index: list[str] = []
+    timed_out: dict[str, list[str]] = {}
+    failed: dict[str, list[str]] = {}
+    unresolved_p99: set[str] = set()
+
+    for target in targets:
+        statuses = {
+            name: entry["targets"].get(target, {}).get("status")
+            for name, entry in workloads.items()
+        }
+        if statuses and all(s in {"unavailable", None} for s in statuses.values()):
+            unavailable.append(target)
+            continue
+        for name, entry in workloads.items():
+            record = entry["targets"].get(target, {})
+            status = record.get("status")
+            if status == "timeout":
+                timed_out.setdefault(target, []).append(name)
+            elif status in {"failed", "unsupported"}:
+                failed.setdefault(target, []).append(name)
+            if any(c.startswith("p99") for c in record.get("caveats", ())):
+                unresolved_p99.add(target)
+
+        ingest = workloads.get("ingest", {}).get("targets", {}).get(target, {})
+        if ingest.get("index_verified") is not True:
+            unverified_index.append(target)
+
+    lines = [
+        "## Limitations",
+        "",
+        "Generated from this run's own record, not written from memory.",
+        "",
+    ]
+
+    if unavailable:
+        lines += [
+            f"**Not measured at all: {', '.join(unavailable)}.** These targets appear in "
+            "every table as `not reachable`, which is different from and less "
+            "flattering than being absent. Nothing about their performance is "
+            "claimed or implied here.",
+            "",
+        ]
+
+    if unverified_index:
+        lines += [
+            f"**Index unconfirmed: {', '.join(unverified_index)}.** The Paper(id) index "
+            "could not be verified by catalogue introspection or by query plan. "
+            "An engine reading without the index every other engine has is "
+            "answering an easier question, so **its read latencies are not "
+            "comparable and must not be quoted against the others**, however "
+            "favourable they look.",
+            "",
+        ]
+
+    if timed_out:
+        detail = "; ".join(f"{t}: {', '.join(sorted(w))}" for t, w in sorted(timed_out.items()))
+        lines += [
+            f"**Timed out: {detail}.** The engine accepted the query and was still "
+            "working when the bound expired. That is a statement about the engine "
+            "at this resource cap, not about the query being wrong, and no latency "
+            "from a timed-out workload reaches any statistic.",
+            "",
+        ]
+
+    if failed:
+        detail = "; ".join(f"{t}: {', '.join(sorted(w))}" for t, w in sorted(failed.items()))
+        lines += [
+            f"**Failed or unsupported: {detail}.** Recorded as failures rather than "
+            "omitted, so a gap in the comparison is visible rather than silent.",
+            "",
+        ]
+
+    if unresolved_p99:
+        lines += [
+            f"**p99 not resolvable for {', '.join(sorted(unresolved_p99))}** at this "
+            "sample size: nearest-rank p99 needs 100 observations before it is "
+            "distinguishable from the maximum. Those cells are marked and should "
+            "be read as the maximum.",
+            "",
+        ]
+
+    loose = [n for n, e in workloads.items() if e.get("equivalence") == "loose"]
+    if loose:
+        lines += [
+            f"**Loose equivalence: {', '.join(sorted(loose))}.** The engines are asked "
+            "for the same answer but reach it by materially different means, so "
+            "this row compares engine-plus-optimiser rather than raw traversal "
+            "speed. Do not quote its ratio on its own.",
+            "",
+        ]
+
+    lines += [
+        "**Structural limits that apply to every number here**, regardless of which targets ran:",
+        "",
+        "- One client, one connection, at each stated concurrency level. This is "
+        "a latency benchmark; it does not measure capacity.",
+        "- One dataset at one size. An engine that wins on 27,770 nodes may lose "
+        "at a hundred times that, and nothing here predicts which.",
+        "- Read-heavy. Only the bulk load and the mixed workload write at all.",
+        "- Nothing about durability, replication, failover, backup or operability.",
+        "- A single run. Free-tier instances share hardware and drift; a gap "
+        "smaller than the spread between repeat runs is not a finding.",
+        "",
+    ]
+    return "\n".join(lines)
+
+
+def render_conclusion(summary: dict[str, Any]) -> str:
+    """What may and may not be concluded, given which targets actually ran."""
+    workloads = summary["workloads"]
+    targets = sorted({t for entry in workloads.values() for t in entry["targets"]})
+
+    measured = []
+    for target in targets:
+        ok = any(
+            entry["targets"].get(target, {}).get("status") == "ok" for entry in workloads.values()
+        )
+        if ok:
+            measured.append(target)
+
+    ingest_targets = workloads.get("ingest", {}).get("targets", {})
+    comparable = [t for t in measured if ingest_targets.get(t, {}).get("index_verified") is True]
+    non_comparable = [t for t in measured if t not in comparable]
+
+    lines = [
+        "## Conclusion",
+        "",
+        f"**Measured: {', '.join(measured) if measured else 'nothing'}.**",
+        "",
+    ]
+
+    if comparable:
+        lines += [
+            f"**Directly comparable: {', '.join(comparable)}.** These ran the same "
+            "workloads, with the same seeded parameters in the same order, under "
+            "verified equivalent indexes, one target at a time so none contended "
+            "with another. Differences between them are attributable to the "
+            "engines and their configuration.",
+            "",
+        ]
+    if non_comparable:
+        lines += [
+            f"**Present but not directly comparable: {', '.join(non_comparable)}.** "
+            "See the limitations above for why in each case. Their rows are "
+            "published because omitting them would hide the gap, not because "
+            "they support a ranking.",
+            "",
+        ]
+
+    lines += [
+        "The honest summary of any single run of this kind is narrow: it says "
+        "how these builds behaved on this dataset, at this size, under these "
+        "caps, from this client, on this day. It does not establish that one "
+        "engine is faster than another in general, and the raw per-iteration "
+        "timings are committed alongside precisely so that anyone who "
+        "disagrees with the statistics can compute their own from the same "
+        "observations.",
+        "",
+    ]
+    return "\n".join(lines)
