@@ -236,6 +236,18 @@ def render_ingest_table(summary: dict[str, Any], table_format: str = "github") -
     )
 
 
+def _configured_targets() -> list[str]:
+    """Every target declared in config, whether or not it produced results."""
+    try:
+        from ..core.config import load_config
+
+        return [t.name for t in load_config().targets]
+    except Exception:
+        # Reporting must not fail because config is unreadable from wherever
+        # this is being rendered.
+        return []
+
+
 def render_limitations(summary: dict[str, Any]) -> str:
     """What this run does not support, derived from the run itself.
 
@@ -282,6 +294,22 @@ def render_limitations(summary: dict[str, Any]) -> str:
         "Generated from this run's own record, not written from memory.",
         "",
     ]
+
+    # A target that produced no result file is invisible in every table above,
+    # and an absent row reads as "not part of the comparison" when the truth is
+    # "we failed to measure it". Naming it here is the only place that can be
+    # said, because there is no row to carry the caveat.
+    absent = [name for name in _configured_targets() if name not in targets]
+    if absent:
+        lines += [
+            f"**No results at all: {', '.join(absent)}.** These targets are configured "
+            "but produced no usable result file, so they appear in no table above. "
+            "Their absence is a gap in this benchmark, not a judgement about them: "
+            "nothing here says whether they would have been faster or slower. Any "
+            "comparison drawn from this report covers only the targets that "
+            "actually ran.",
+            "",
+        ]
 
     if unavailable:
         lines += [
