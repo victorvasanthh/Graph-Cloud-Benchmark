@@ -25,7 +25,7 @@ results table:**
 | Target | What happened |
 |---|---|
 | **FalkorDB** (container) | **Not benchmarked.** A 100-iteration run was in progress when the Codespace restarted; the process was killed before writing any result file. An earlier smoke run reached it successfully, so this is an *interrupted measurement*, not an engine that could not be benchmarked. No FalkorDB timing appears anywhere in this repository. |
-| **CognoDB Cloud** (managed) | **Unavailable.** Authentication failed against the instance, so every workload is recorded as `not reachable`. Earlier diagnostic runs also showed connection loss on heavy workloads and an index that could not be confirmed. No CognoDB timing is published. |
+| **CognoDB Cloud** (managed) | **Not included in the full comparison.** The instance was successfully connected and loaded, but the full 100-iteration benchmark was not completed: several workloads lost the connection or failed during the run on the free tier. No CognoDB performance result is used in the final comparison. *(Tables show `not reachable` because the connection at the start of the final run did not authenticate; see [Evidence for CognoDB](#evidence-for-cognodb).)* |
 
 Nothing in this report says whether FalkorDB or CognoDB would have been faster
 or slower. Their absence is a gap in this benchmark, not a finding about them.
@@ -38,6 +38,36 @@ or slower. Their absence is a gap in this benchmark, not a finding about them.
 **Everything containerised runs in GitHub Codespaces.** The devcontainer is the
 supported environment; no Docker installation on a local machine is expected or
 required.
+
+### Evidence for CognoDB
+
+Because smoke-run artifacts are gitignored, the successful connection and load
+are **not** present as result data in this repository. What is verifiable here:
+
+- **Connection and load succeeded** during diagnostics. The docstring of
+  [`tests/test_schema_diagnostics.py`](tests/test_schema_diagnostics.py) records
+  that CognoDB loaded 27,770 nodes and 352,768 edges, and
+  [`benchmark/databases/bolt.py`](benchmark/databases/bolt.py) contains a
+  CognoDB-specific Cypher flavour that exists only because a live instance
+  rejected `CALL { ... } IN TRANSACTIONS` at parse position 42 — code written
+  against observed behaviour, not speculation.
+- **Several workloads completed, several lost the connection.** Point lookup,
+  one-hop and two-hop returned; the three-hop neighbourhood died after ~25
+  seconds, and the workloads after it could not re-establish a connection.
+  `scripts/probe_workloads.py` exists to test each workload on a fresh
+  connection for exactly this reason.
+- **The index could never be confirmed**, which is why no CognoDB read timing
+  would have been publishable even had the run completed — an engine reading
+  without the index the others had is answering an easier question.
+- **The final run did not authenticate.** `results/raw/final-combined.json`
+  records 15 runs, all `unavailable`, with a
+  `Neo.ClientError.Security.Unauthorized` error. That is why every table cell
+  reads `not reachable`.
+
+**What is deliberately not claimed:** the cause of the mid-run connection
+losses. The client saw the socket close; nothing in this repository establishes
+whether that was a memory limit, a query timeout, a proxy, or something else,
+and server-side logs were not available.
 
 ## ⚠️ Deviation from the assignment brief
 
@@ -259,7 +289,7 @@ the network is the ceiling in the other.
 They describe four engines on one 27,770-node graph, at one size, under one set
 of caps, from one client, on one day. They do not establish that any engine is
 faster in general. **FalkorDB is absent** - its run was interrupted by a
-Codespace restart, not excluded - and **CognoDB Cloud was never reachable**
+Codespace restart, not excluded - and **CognoDB Cloud never completed a full run**
 because authentication failed. Both are disclosed in the report's Limitations
 section, and neither absence implies anything about those engines.
 
